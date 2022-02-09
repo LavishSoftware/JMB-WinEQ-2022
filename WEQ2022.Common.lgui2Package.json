@@ -1,0 +1,23 @@
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "skin":{
+        "name": "WinEQ 2022",
+        "brushes": {
+            "window.titleBar.backgroundBrush":{
+                "color":[0.2,0.3,0.4]
+            }
+        },
+        "templates": {
+            "window.closeButton":{
+                "jsonTemplate":"default:window.closeButton",
+                "borderThickness":[1,1,0,0],
+                "margin":[0,0,0,2]
+            },
+            "window.shadeButton":{
+                "jsonTemplate":"default:window.shadeButton",
+                "borderThickness":[1,1,0,0],
+                "margin":[0,0,2,2]
+            }
+        }
+    }
+}

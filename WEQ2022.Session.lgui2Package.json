@@ -1,0 +1,120 @@
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
+    "includes": ["WEQ2022.Common.lgui2Package.json"],
+    "skin":"WinEQ 2022",
+    "templates": {
+        "weq2022.presetView": {
+            "jsonTemplate": "listboxitem",
+            "padding": 3,
+            "content": {
+                "type":"stackpanel",
+                "orientation":"vertical",
+                "borderThickness":[0,0,0,1],
+                "borderBrush":{
+                    "color":[1.0,1.0,1.0]
+                },
+                "children":[
+                    {
+                        "type":"stackpanel",
+                        "orientation":"horizontal",
+                        "children":[
+                            {
+                                "type": "textblock",
+                                "font":{
+                                    "heightFactor":1.2,
+                                    "bold":true
+                                },
+                                "textBinding": {
+                                    "pullFormat": "${_CONTEXTITEMDATA_.Get[Name]}",
+                                    "pullReplaceNull": ""
+                                }
+                            },
+                            {
+                                "type":"textblock",
+                                "textBinding": {
+                                    "pullFormat": "${WEQ2022Session.GetPresetHotkeyView[${_CONTEXTITEMDATA_.Get[NumPreset]}]}",
+                                    "pullReplaceNull": ""
+                                }
+                            }        
+                        ]
+                    },
+                    {
+                        "type": "textblock",
+                        "color":[0.75,0.75,0.75],
+                        "textBinding": {
+                            "pullFormat": "${_CONTEXTITEMDATA_.Get[Summary]}",
+                            "pullReplaceNull": ""
+                        }
+                    }
+                ]            
+            }
+        }        
+    },
+    "elements": [
+        {
+            "type": "panel",
+            "visibility": "hidden",
+            "name": "weq2022.events"
+        },
+        {
+            "type": "window",
+            "name": "weq2022.PresetsWindow",
+            "title":"WinEQ 2022: Window Presets",
+            "width":400,
+            "visibility": "visible",
+            "content": {
+                "type": "dockpanel",
+                "children": [
+                    {
+                        "type":"button",
+                        "_dock":"bottom",
+                        "horizontalAlignment": "center",
+                        "font":{
+                            "heightFactor": 1.2,
+                            "bold":true
+                        },
+                        "margin":[0,3,0,3],
+                        "content":"Apply",
+                        "eventHandlers": {
+                            "onPress":{
+                                "type":"method",
+                                "object":"WEQ2022Session",
+                                "method":"ApplySelectedPreset"
+                            }
+                        }
+                    },
+                    {
+                        "type": "listbox",
+                        "_dock": "top",
+                        "horizontalAlignment": "stretch",
+                        "name": "weq2022.SelectedPreset",
+                        "itemsBinding": {
+                            "pullFormat": "${WEQ2022Session.ActivePresets}",
+                            "pullOnce": true,
+                            "pullHook": {
+                                "elementName": "weq2022.events",
+                                "flags": "global",
+                                "event": "onPresetsUpdated"
+                            }
+                        },
+                        "selectedItemBinding": {
+                            "pullFormat": "${WEQ2022Session.SelectedPreset}",
+                            "pushFormat": [
+                                "WEQ2022Session:SetSelectedPreset[\"",
+                                "\"]"
+                            ]
+                        },
+                        "selectedItemBindingProperty": "NumPreset",
+                        "itemViewGenerators": {
+                            "default": {
+                                "type": "method",
+                                "object": "WEQ2022Session",
+                                "method": "GenerateItemView_Preset"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

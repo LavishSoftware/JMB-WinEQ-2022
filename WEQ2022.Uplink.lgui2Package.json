@@ -1,0 +1,354 @@
+{
+    "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",    
+    "includes": ["WEQ2022.Common.lgui2Package.json"],
+    "skin":"WinEQ 2022",
+    "templates":{
+        "weq2022.defaultSettings":{
+            "Indicator":true,
+            "IndicatorX":20,
+            "IndicatorY":28,
+            "LockGamma":false,
+            "EQPlayNice":true,
+            "Hotkeys":{
+              "ContextMenu":"Shift+RButton",
+              "NextSession":"Ctrl+Alt+X",
+              "PrevSession":"Ctrl+Alt+Z",
+              "Duplicate":"Ctrl+Alt+N",
+              "TogglePIPLock":"Ctrl+Alt+O",
+              "TogglePIP":"Ctrl+Alt+P",
+              "ToggleBorder":"Ctrl+=",
+              "ToggleTiling":"Ctrl+\\",
+              "ToggleIndicator":"Ctrl+Alt+M",
+              "ResetWindow":"Shift+Alt+R",
+              "StoreWindow":"Ctrl+Alt+S",
+              "Preset1":"Shift+Alt+N",
+              "Global1":"Ctrl+Alt+1",
+              "Preset2":"Shift+Alt+T",
+              "Global2":"Ctrl+Alt+2",
+              "Preset3":"Shift+Alt+F",
+              "Global3":"Ctrl+Alt+3",
+              "Preset4":"NONE",
+              "Global4":"Ctrl+Alt+4",
+              "Preset5":"NONE",
+              "Global5":"Ctrl+Alt+5",
+              "Preset6":"NONE",
+              "Global6":"Ctrl+Alt+6",
+              "Preset7":"NONE",
+              "Global7":"Ctrl+Alt+7",
+              "Preset8":"NONE",
+              "Global8":"Ctrl+Alt+8",
+              "Preset9":"NONE",
+              "Global9":null,
+              "Preset10":"NONE",
+              "Global10":null
+            },
+            "Profile1":{
+              "Name":"WinEQ 2.0 Default Profile",
+              "WindowText":"WinEQ {VERSION} {PLUGIN} - EverQuest (Hotkey: {HOTKEY})",
+              "GlobalHotkey":"AUTO",
+              "EQPath":"c:/users/public/daybreak game company/installed games/everquest",
+              "EQClientINI":".\\eqclient.ini",
+              "Preset":0,
+              "Locale":0,
+              "Adapter":-1,
+              "Sound":true,
+              "Patch":false,
+              "TestServer":false,
+              "Tile":-1,
+              "FGTileScale":0.60,
+              "BGTileScale":0.50,
+              "PIP":false,
+              "PIPX":20,
+              "PIPY":20,
+              "PIPBorder":false,
+              "PIPScale":0.20,
+              "UseGame":"EverQuest Client"
+            },
+            "Preset1":{
+              "Name":"Normal",
+              "WindowText":null,
+              "X":0,
+              "Y":15,
+              "AlwaysOnTop":false,
+              "FullScreen":false,
+              "LockPosition":false,
+              "LockSize":false,
+              "Border":true,
+              "Scale":1.0
+            },
+            "Preset2":{
+              "Name":"Tiny",
+              "WindowText":null,
+              "X":0,
+              "Y":4,
+              "AlwaysOnTop":true,
+              "FullScreen":false,
+              "LockPosition":false,
+              "LockSize":false,
+              "Border":true,
+              "Scale":0.20
+            },  
+            "Preset3":{
+              "Name":"Full Screen (emulated)",
+              "WindowText":null,
+              "X":0,
+              "Y":0,
+              "AlwaysOnTop":false,
+              "FullScreen":true,
+              "LockPosition":false,
+              "LockSize":false,
+              "Border":false,
+              "Scale":1.0
+            }
+        },
+        "weq2022.profileView":{
+            "jsonTemplate":"listboxitem",
+            "padding":2,
+            "content":{
+              "type":"textblock",
+              "textBinding":{
+                "pullFormat":"${_CONTEXTITEMDATA_.Get[Name]}",
+                "pullReplaceNull":""
+              }
+            }
+          }      
+    },
+    "elements": [
+        {
+            "type": "panel",
+            "visibility": "hidden",
+            "name": "weq2022.events"
+        },
+        {
+            "type":"window",
+            "name":"weq2022.MainWindow",
+            "title":"WinEQ 2022 Joe Multiboxer Edition",
+            "width":500,
+            "height":400,
+            "visibility": "hidden",
+            "content":{
+                "type":"dockpanel",
+                "horizontalAlignment": "stretch",
+                "verticalAlignment": "stretch",
+                "children":[
+                    {
+                        "type":"dockpanel",
+                        "_dock":"top",
+                        "padding":2,
+                        "horizontalAlignment": "stretch",
+                        "heightFactor":0.5,
+                        "children":[
+                            {
+                                "type":"textblock",
+                                "text":"Profiles",
+                                "_dock":"top"
+                            },
+                            {
+                                "type":"listbox",
+                                "_dock":"left",
+                                "widthFactor":0.3,
+                                "verticalAlignment": "stretch",
+                                "name":"weq2022.UseProfile",
+                                "itemsBinding":{
+                                    "pullFormat": "${WEQ2022.Profiles.AsJSON}",
+                                    "pullHook": {   
+                                      "elementName": "weq2022.events",
+                                      "flags": "global",
+                                      "event": "onProfilesUpdated"
+                                    }
+                                },
+                                "selectedItemBinding":{
+                                    "pullFormat":"${WEQ2022.UseProfile.Name}",
+                                    "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
+                                },
+                                "selectedItemBindingProperty":"Name",
+                                "itemViewGenerators":{
+                                    "default":{
+                                      "type":"method",
+                                      "object":"WEQ2022",
+                                      "method":"GenerateItemView_Profile"
+                                    }
+                                }
+                            },
+                            {
+                                "type":"objectview",
+                                "_dock":"top",
+                                "horizontalAlignment":"stretch",
+                                "verticalAlignment":"stretch",
+                                "objectBinding": {
+                                    "pullFormat":"${WEQ2022.UseProfile}"
+                                },
+                                "properties":[
+                                    {
+                                        "name":"Name",
+                                        "dataBinding":{
+                                          "pullFormat":"${_CONTEXT_.Object.Name}",
+                                          "pullReplaceNull":""
+                                        },
+                                        "viewTemplate":"propertyview.textblock"                            
+                                    },
+                                    {
+                                        "name":"EverQuest Path",
+                                        "dataBinding":{
+                                            "pullFormat":"${_CONTEXT_.Object.EQPath}",
+                                            "pullReplaceNull":""
+                                          },
+                                          "viewTemplate":"propertyview.textblock"  
+                                    },
+                                    {
+                                        "name":"Use Patcher",
+                                        "dataBinding":{
+                                            "pullFormat":"${_CONTEXT_.Object.Patch}",
+                                            "pullReplaceNull":""
+                                          },
+                                          "viewTemplate":"propertyview.checkbox"  
+                                    },
+                                    {
+                                        "name":"JMB Game",
+                                        "dataBinding":{
+                                            "pullFormat":"${_CONTEXT_.Object.UseGame}",
+                                            "pullReplaceNull":""
+                                          },
+                                          "viewTemplate":"propertyview.textblock"  
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type":"dockpanel",
+                        "_dock":"top",
+                        "padding":2,
+                        "horizontalAlignment":"stretch",
+                        "verticalAlignment":"stretch",
+                        "children":[
+                            {
+                                "type":"button",
+                                "_dock":"left",
+                                "content":"Launch",
+                                "font":{
+                                    "heightFactor":1.2,
+                                    "bold":true
+                                },
+                                "eventHandlers":{
+                                    "onPress":{
+                                        "type":"method",
+                                        "object":"WEQ2022",
+                                        "method":"OnLaunchButton"
+                                    }
+                                }
+                            },
+                            {
+                                "type":"button",
+                                "_dock":"right",
+                                "content":"Reload Agent",
+                                "font":{
+                                    "heightFactor":1.2,
+                                    "bold":true
+                                },
+                                "eventHandlers":{
+                                    "onPress":{
+                                        "type":"code",
+                                        "code":"JMB.Agent[WinEQ 2022]:Stop:Start"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type":"dockpanel",
+                        "_dock":"top",
+                        "padding":2,
+                        "horizontalAlignment":"stretch",
+                        "verticalAlignment":"stretch",
+                        "children":[
+                            {
+                                "type":"checkbox",
+                                "_dock":"top",
+                                "content":"Add new Slot when launching"
+                            }
+                        ]
+                    }
+                    
+                ]
+            }
+        },
+        {
+            "type":"window",
+            "name":"weq2022.FirstRun",
+            "title":"Welcome to WinEQ 2022 Joe Multiboxer Edition!",
+            "width":500,
+            "visibility": "hidden",
+            "content":{
+                "type":"dockpanel",
+                "padding":3,
+                "children":[
+                    {
+                        "type":"textblock",
+                        "text":"So, you're new here. We can start by importing your WinEQ 2 settings!",
+                        "_dock":"top"
+                    },
+                    {
+                        "type":"dockpanel",
+                        "_dock":"top",
+                        "margin":[3,3],
+                        "children":[
+                            {
+                                "type":"textblock",
+                                "text":"WinEQ 2 Folder",
+                                "_dock":"left",
+                                "verticalAlignment": "center",
+                                "margin":[0,0,5,0]
+                            },
+                            {
+                                "type":"textbox",
+                                "textBinding":"WEQ2022.WinEQ2Folder",
+                                "_dock":"right",
+                                "horizontalAlignment": "stretch"
+                            }        
+                        ]
+                    },
+                    {
+                        "type":"textblock",
+                        "name":"weq2022.FirstRun.NotFound",
+                        "_dock":"top",
+                        "visibility":"collapsed",
+                        "margin":5,
+                        "color":[1.0,0,0],
+                        "text":"WinEQ 2 not found in ${WEQ2022.WinEQ2Folder}",
+                        "font":{
+                            "bold":true,
+                            "heightFactor": 1.2
+                        }
+                    },
+                    {
+                        "type":"button",
+                        "_dock":"left",
+                        "content":"Skip and use default settings",
+                        "margin":5,
+                        "eventHandlers":{
+                            "onPress":{
+                                "type":"method",
+                                "object":"WEQ2022",
+                                "method":"OnDefaultsButton"
+                            }
+                        }
+                    },
+                    {
+                        "type":"button",
+                        "_dock":"right",
+                        "margin":5,
+                        "content":"Import WinEQ 2 Settings",
+                        "eventHandlers":{
+                            "onPress":{
+                                "type":"method",
+                                "object":"WEQ2022",
+                                "method":"OnImportButton"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

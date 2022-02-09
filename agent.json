@@ -1,0 +1,35 @@
+{
+    "$schema": "http://www.lavishsoft.com/schema/agent.json",
+    "name": "WinEQ 2022",
+    "platforms": {
+        "joe multiboxer uplink": {
+            "eventHandlers": {
+                "onAgentStartup": {
+                    "code": [
+                        "run WEQ2022.Uplink.iss"
+                    ]
+                },
+                "onAgentShutdown": {
+                    "code": [                        
+                        "endscript WEQ2022.Uplink"
+                    ]
+                }
+            }
+        },
+        "joe multiboxer session": {
+            "eventHandlers": {
+                "onAgentStartup": {
+                    "code": [
+                        "run WEQ2022.Session.iss"
+                    ]
+                },
+                "onAgentShutdown": {
+                    "code": [                        
+                        "endscript WEQ2022.Session"
+                    ]
+                }
+            }
+        }
+
+    }
+}
