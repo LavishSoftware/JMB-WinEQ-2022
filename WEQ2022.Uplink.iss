@@ -112,7 +112,7 @@ objectdef weq2022
 
         variable int NumFolder=1
         variable string Suffix
-        for (i:Set[1] ; ${i}<=10 ; i:Inc)
+        for (i:Set[1] ; ${i}<=30 ; i:Inc)
         {
             if !${Settings.Profiles[${i}].Name.NotNULLOrEmpty} || !${Settings.Profiles[${i}].EQPath.NotNULLOrEmpty} || !${Settings.Profiles[${i}].EQPath.PathExists}
                 continue
@@ -241,7 +241,7 @@ objectdef weq2022
     member:weakref FindProfile(string name)
     {
         variable int i
-        for (i:Set[1] ; ${i}<=10 ; i:Inc)
+        for (i:Set[1] ; ${i}<=30 ; i:Inc)
         {
             if ${Settings.Profiles[${i}].Name.Equal["${name~}"]}
             {
@@ -266,7 +266,7 @@ objectdef weq2022
         variable jsonvalue ja="[]"
 
         variable int i
-        for (i:Set[1] ; ${i}<=10 ; i:Inc)
+        for (i:Set[1] ; ${i}<=30 ; i:Inc)
         {
             if ${Settings.Profiles[${i}].Name.NotNULLOrEmpty}
             {

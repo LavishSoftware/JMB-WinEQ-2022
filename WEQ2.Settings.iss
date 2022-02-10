@@ -15,7 +15,7 @@ objectdef weq2settings
     method Initialize()
     {
         Presets:Resize[10]
-        Profiles:Resize[10]
+        Profiles:Resize[30]
     }
 
     ; Generate a JSON snapshot
@@ -34,9 +34,13 @@ objectdef weq2settings
         <$$"]
 
         variable int i
+        for (i:Set[1] ; ${i}<= 30 ; i:Inc)
+        {
+            if ${Profiles[${i}].Name.NotNULLOrEmpty}
+                jo:Set[Profile${i},"${This.Profiles[${i}].AsJSON~}"]
+        }
         for (i:Set[1] ; ${i}<= 10 ; i:Inc)
         {
-            jo:Set[Profile${i},"${This.Profiles[${i}].AsJSON~}"]
             jo:Set[Preset${i},"${This.Presets[${i}].AsJSON~}"]
         }
 
@@ -78,7 +82,7 @@ objectdef weq2settings
             Hotkeys:FromJSON[jo]
         }
 
-        for (i:Set[1] ; ${i}<= 10 ; i:Inc)
+        for (i:Set[1] ; ${i}<= 30 ; i:Inc)
         {
             jo:SetReference["joRoot.Get[Profile${i}]"]
             if ${jo.Reference(exists)}
