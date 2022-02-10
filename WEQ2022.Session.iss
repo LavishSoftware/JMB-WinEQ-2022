@@ -57,7 +57,12 @@ objectdef weq2022session
 
             numPreset:Set[${CurrentProfile.Preset}]
 
-            UseGlobalHotkey:Set["${Settings.Hotkeys.Globals[${JMB.Slot.ID}]~}"]
+            if ${CurrentProfile.GlobalHotkey.NotNULLOrEmpty} && ${CurrentProfile.GlobalHotkey.NotEqual["AUTO"]}
+            {
+                UseGlobalHotkey:Set["${CurrentProfile.GlobalHotkey~}"]
+            }
+            else
+                UseGlobalHotkey:Set["${Settings.Hotkeys.Globals[${JMB.Slot.ID}]~}"]            
         }
 
         ; now assign the default preset...
