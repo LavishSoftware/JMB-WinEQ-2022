@@ -125,6 +125,8 @@
             "title":"WinEQ 2022 Joe Multiboxer Edition",
             "width":500,
             "height":400,
+            "horizontalAlignment":"center",
+            "verticalAlignment":"center",
             "visibility": "hidden",
             "content":{
                 "type":"dockpanel",
@@ -279,6 +281,8 @@
             "title":"Welcome to WinEQ 2022 Joe Multiboxer Edition!",
             "width":500,
             "visibility": "hidden",
+            "horizontalAlignment":"center",
+            "verticalAlignment":"center",
             "content":{
                 "type":"dockpanel",
                 "padding":3,
