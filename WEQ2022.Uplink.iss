@@ -95,6 +95,10 @@ objectdef weq2022
                 {
                     "pattern":"*\/eqclient.ini",
                     "replacement":"{1}/${EQClientINI~}"
+                },
+                {
+                    "pattern":"*\/eqlsPlayerData.ini",
+                    "replacement":"{1}/eqlsPlayerData.WinEQProfile${NumProfile}.ini"
                 }
             ]
         }
