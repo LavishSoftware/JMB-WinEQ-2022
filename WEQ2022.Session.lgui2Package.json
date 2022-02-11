@@ -60,6 +60,7 @@
             "type": "window",
             "name": "weq2022.PresetsWindow",
             "title":"WinEQ 2022: Window Presets",
+            "hideOnClose": true,
             "width":400,
             "visibility": "visible",
             "content": {

@@ -122,6 +122,7 @@
         {
             "type":"window",
             "name":"weq2022.MainWindow",
+            "hideOnClose":true,
             "title":"WinEQ 2022 Joe Multiboxer Edition",
             "width":500,
             "height":400,
@@ -279,6 +280,7 @@
             "type":"window",
             "name":"weq2022.FirstRun",
             "title":"Welcome to WinEQ 2022 Joe Multiboxer Edition!",
+            "hideOnClose":true,
             "width":500,
             "visibility": "hidden",
             "horizontalAlignment":"center",
