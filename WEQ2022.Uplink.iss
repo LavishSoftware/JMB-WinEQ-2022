@@ -84,6 +84,10 @@ objectdef weq2022
         if !${EQClientINI.NotNULLOrEmpty}
             EQClientINI:Set["eqclient.ini"]
 
+        variable uint eqlsFileNumber
+        if ${NumProfile}>0
+            eqlsFileNumber:Set[${NumProfile}-1]
+
         variable jsonvalue jo
         jo:SetValue["$$>
         {
@@ -98,7 +102,7 @@ objectdef weq2022
                 },
                 {
                     "pattern":"*\/eqlsPlayerData.ini",
-                    "replacement":"{1}/eqlsPlayerData.WinEQProfile${NumProfile}.ini"
+                    "replacement":"{1}/eqlsPlayerData.WinEQProfile${eqlsFileNumber}.ini"
                 }
             ]
         }
