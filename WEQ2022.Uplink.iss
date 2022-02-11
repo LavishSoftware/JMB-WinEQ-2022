@@ -17,9 +17,9 @@ objectdef weq2022
     {
         variable filepath fpFolder="${WinEQ2Folder~}"
         
-        if ${JMB.Build}<6861
+        if ${JMB.Build}<6863
         {
-            echo "WinEQ 2022 requires JMB build 6861 or later"
+            echo "WinEQ 2022 requires JMB build 6863 or later"
             return
         }
         
@@ -30,7 +30,8 @@ objectdef weq2022
         if !${Settings.SettingsFileExists}
         {
             ; first run
-            LGUI2.Element[weq2022.FirstRun]:SetVisibility[Visible]
+            MainWindow -show
+            LGUI2.Element[weq2022.FirstRun]:SetVisibility[Visible]:BubbleToTop
 
             if !${fpFolder.FileExists[wineq-eq.ini]}
             {
@@ -45,10 +46,11 @@ objectdef weq2022
             ; not first run
             Settings:ImportJSON
             This:InstallEQFolders
-            LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]            
+            LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]:BubbleToTop
         }
 
         This:SetProfile["WinEQ 2.0 Default Profile"]
+        This:InstallMenu
     }
 
     ; Object destructor
@@ -112,6 +114,84 @@ objectdef weq2022
         JMB:AddCharacter["${jo.AsJSON~}"]
     }
 
+    method OnMainWindowCommand()
+    {
+        MainWindow -show
+
+        switch ${LGUI2.Element[weq2022.firstRun].Visibility}
+        {
+            case Visible
+                LGUI2.Element[weq2022.firstRun]:BubbleToTop
+                break
+            default
+                LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]:BubbleToTop
+                break
+        }        
+    }
+
+
+
+    ; install WinEQ 2022 sub-menu in the Joe Multiboxer right-click menu
+    method InstallMenu()
+    {
+        ISMenu.FindChild["WinEQ 2022"]:Remove
+
+        variable jsonvalue jo
+        jo:SetValue["$$>
+        {
+            "name":"WinEQ 2022",
+            "type":"submenu",
+            "items":[
+                {
+                    "name":"Main Window",
+                    "type":"command",
+                    "command":"WEQ2022:OnMainWindowCommand"
+                },
+                {
+                    "name":":Launch",
+                    "type":"submenu",
+                    "items":${This.GetProfileMenuItems.AsJSON~}
+                }
+            ]
+        }
+        <$$"]
+
+        ISMenu:AddFromJSON["${jo.AsJSON~}"]
+    }
+
+    ; Generates Joe Multiboxer menu items for launching each profile
+    member:jsonvalueref GetProfileMenuItems()
+    {
+        variable jsonvalue ja="[]"
+
+        variable int i
+        for (i:Set[1] ; ${i}<=30 ; i:Inc)
+        {
+            if ${Settings.Profiles[${i}].Name.NotNULLOrEmpty}
+            {
+                ja:Add["${This.GetProfileMenuItem[${i}]~}"]
+            }
+        }
+
+        return ja
+    }
+
+    ; Generates a Joe Multiboxer menu item to launch a specific profile
+    member:jsonvalueref GetProfileMenuItem(uint numProfile)
+    {
+        variable string useName="${Settings.Profiles[${numProfile}].Name~}" 
+        variable string useCommand="WEQ2022:OnLaunchProfileCommand[${numProfile}]"
+        variable jsonvalue jo
+        jo:SetValue["$$>
+                {
+                    "name":${useName.AsJSON~},
+                    "type":"command",
+                    "command":${useCommand.AsJSON~}
+                }
+                <$$"]
+        return jo
+    }
+
     ; Install any EQ1 folders used by Profiles to Joe Multiboxer as "Games", and insert the name used back in the Profile
     method InstallEQFolders()
     {
@@ -143,6 +223,29 @@ objectdef weq2022
         }
     }
 
+    ; Find a Slot that does not currently have a running game instance 
+    member:uint FindEmptySlot()
+    {
+        variable jsonvalueref currentSlots="JMB.Slots"
+        variable uint i
+        for (i:Set[1] ; ${i} <= ${currentSlots.Used} ; i:Inc)
+        {
+            if !${currentSlots.Get[${i},"processId"]}
+            {
+                return ${i}
+            }
+        }
+        return 0
+    }
+
+    ; Used by the Joe Multiboxer right-click menu when the user selects a profile from the Launch menu
+    method OnLaunchProfileCommand(uint numProfile)
+    {
+;        echo OnLaunchProfileCommand[${numProfile}]
+        UseProfile:SetReference["Settings.Profiles[${numProfile}]"]
+        This:OnLaunchButton
+    }
+
     ; Used by GUI when the user clicks Launch
     method OnLaunchButton()
     {
@@ -155,10 +258,11 @@ objectdef weq2022
         }
 
         variable uint Slot
-        ; with this method, clicking launch will always add a new Slot, even if some are empty.
-        ; we can add better management to this agent to re-use empty Slots
-        ; the Basic Session Manager agent can be used to manage Slots, including re-launching a given Slot
-        Slot:Set["${JMB.AddSlot.ID}"]
+        ; with this method, clicking launch will first attempt to fill an existing Slot that has not been launched
+        ; however, that also means we have to wait between launches or they fill the same Slot.
+        Slot:Set[${This.FindEmptySlot}]
+        if !${Slot}
+            Slot:Set["${JMB.AddSlot.ID}"]
 
         echo "launching WinEQ 2 profile ${UseProfile.Name} in slot ${Slot}"
 
@@ -197,7 +301,7 @@ objectdef weq2022
         ; hide our "first run" window
         LGUI2.Element[weq2022.FirstRun]:SetVisibility[Hidden]
         ; show our main window
-        LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]
+        LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]:BubbleToTop
     }
 
     ; Used by GUI when the user clicks the button to import settings from WinEQ 2 folder
@@ -221,6 +325,8 @@ objectdef weq2022
             echo "[WEQ2022] Import failed..."
             return
         }
+
+        This:InstallMenu
         This:InstallEQFolders
         ; store the new settings as our own JSON file
         Settings:ExportJSON
@@ -228,7 +334,7 @@ objectdef weq2022
         ; hide our "first run" window
         LGUI2.Element[weq2022.FirstRun]:SetVisibility[Hidden]
         ; show our main window
-        LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]
+        LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]:BubbleToTop
     }
 
     ; Generate a listbox item view of a Profile

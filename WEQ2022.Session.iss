@@ -31,9 +31,9 @@ objectdef weq2022session
     ; Object constructor
     method Initialize()
     {
-        if ${JMB.Build}<6861
+        if ${JMB.Build}<6863
         {
-            echo "WinEQ 2022 requires JMB build 6861 or later"
+            echo "WinEQ 2022 requires JMB build 6863 or later"
             return
         }
 
