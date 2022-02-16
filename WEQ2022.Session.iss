@@ -310,6 +310,52 @@ objectdef weq2022session
         return " (${Settings.Hotkeys.Presets[${numPreset}]~})"
     }
 
+    
+    member:uint GetPreviousSlot()
+    {
+        variable uint Slot=${JMB.Slot}
+        if !${Slot}
+            return 0
+
+        Slot:Dec
+        if !${Slot}
+            return ${JMB.Slots.Used}
+
+        return ${Slot}
+    }
+
+    method PreviousWindow()
+    {
+        variable uint previousSlot=${This.GetPreviousSlot}
+        if !${previousSlot}
+            return
+
+        if !${Display.Window.IsForeground}
+            return
+
+        uplink focus "jmb${previousSlot}"
+        relay "jmb${previousSlot}" "Event[OnHotkeyFocused]:Execute"
+    }
+
+    method NextWindow()
+    {
+        variable uint nextSlot=${This.GetNextSlot}
+        if !${nextSlot}
+            return
+
+        if !${Display.Window.IsForeground}
+            return
+
+        uplink focus "jmb${nextSlot}"
+        relay "jmb${nextSlot}" "Event[OnHotkeyFocused]:Execute"
+    }
+
+    method OnSlotHotkey(uint numSlot)
+    {
+        uplink focus "jmb${numSlot}"
+        relay "jmb${numSlot}" "Event[OnHotkeyFocused]:Execute"
+    }
+
     method OnHotkey_Preset(uint numPreset)
     {
         echo OnHotkey_Preset[${numPreset}]
@@ -322,11 +368,11 @@ objectdef weq2022session
     }
     method OnHotkey_NextSession()
     {
-        echo OnHotkey_NextSession
+        This:NextWindow
     }
     method OnHotkey_PrevSession()
     {
-        echo OnHotkey_PrevSession
+        This:PreviousWindow
     }
     method OnHotkey_Duplicate()
     {
