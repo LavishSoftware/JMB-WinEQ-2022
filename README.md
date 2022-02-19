@@ -15,11 +15,13 @@ Work is in progress!
 
 # Getting Started
 1. **Install** [Joe Multiboxer](https://joemultiboxer.com). Requires a Lavish Software subscription! If you're already subscribed for WinEQ 2 Pro, there is no additional purchase required.
-2. **Download** [the latest WinEQ 2022 ZIP file](https://github.com/LavishSoftware/JMB-WinEQ-2022/archive/refs/heads/master.zip), and extract into the `Joe Multiboxer\Agents` folder, so that you have a new folder called `WinEQ 2022` and in that folder is the file `agent.json`.
-3. **Launch Joe Multiboxer** 
-4. **Open the main Joe Multiboxer window**, e.g. by double clicking the system tray icon usually by the clock (check hidden icons!)  
+2. **Launch Joe Multiboxer** 
+3. **Open the main Joe Multiboxer window**, e.g. by double clicking the system tray icon usually by the clock (check hidden icons!)  
+4. **Install WinEQ 2022 from the Suggested Agents window**, just select WinEQ 2022 and click Install Now
 5. **Click to Import WinEQ 2 Settings** the first time you use WinEQ 2022!
 6. **Launch EverQuest!** You can use the `WinEQ 2022` menu under the JMB right click menu, or the main WinEQ 2022 window within Joe Multiboxer.
+
+![Install WinEQ 2022 from the Suggested Agents window, just select WinEQ 2022 and click Install Now](https://cdn.discordapp.com/attachments/779854983930839070/944607450215092244/unknown.png)
 
 # Frequently Asked Questions (FAQ)
 
