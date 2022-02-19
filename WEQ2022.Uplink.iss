@@ -148,7 +148,7 @@ objectdef weq2022
                     "command":"WEQ2022:OnMainWindowCommand"
                 },
                 {
-                    "name":":Launch",
+                    "name":"Launch",
                     "type":"submenu",
                     "items":${This.GetProfileMenuItems.AsJSON~}
                 }
