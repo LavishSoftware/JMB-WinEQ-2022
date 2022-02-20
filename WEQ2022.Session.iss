@@ -83,6 +83,7 @@ objectdef weq2022session
 ;        Event[On Deactivate]:AttachAtom[This:OnDeactivate]
         Event[On3DReset]:AttachAtom[This:On3DReset]
 
+        GammaLock on
         This:SetForceWindow[1]
 
         ; if the game window is already created, set it up as desired
