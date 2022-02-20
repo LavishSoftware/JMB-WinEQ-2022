@@ -83,6 +83,8 @@ objectdef weq2022session
 ;        Event[On Deactivate]:AttachAtom[This:OnDeactivate]
         Event[On3DReset]:AttachAtom[This:On3DReset]
 
+        This:SetForceWindow[1]
+
         ; if the game window is already created, set it up as desired
         if ${Display.Window(exists)}
             This:SetupGameWindow
@@ -217,6 +219,12 @@ objectdef weq2022session
                 break
         }
     }
+
+    method SetForceWindow(bool value)
+	{
+			noop ${Direct3D8:SetForceWindowed[${value}]} ${Direct3D9:SetForceWindowed[${value}]} ${Direct3D10:SetForceWindowed[${value}]} ${Direct3D11:SetForceWindowed[${value}]}				
+	}
+
 
     ; Installs a Hotkey, given a name, a key combination, and LavishScript code to execute on PRESS
     method InstallHotkey(string name, string keyCombo, string methodName)
