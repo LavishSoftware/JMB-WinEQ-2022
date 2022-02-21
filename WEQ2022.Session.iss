@@ -87,6 +87,11 @@ objectdef weq2022session
         if ${Settings.UseEQPlayNice}
             Event[EQPN2022.ShouldRenderFrame]:AttachAtom[This:EQPN2022_ShouldRenderFrame]
 
+        if ${Settings.LockGamma}
+            GammaLock on
+            
+        This:SetForceWindow[1]
+
         ; if the game window is already created, set it up as desired
         if ${Display.Window(exists)}
             This:SetupGameWindow
@@ -248,6 +253,12 @@ objectdef weq2022session
             Context:Set["value",FALSE]
         }
     }
+
+    method SetForceWindow(bool value)
+	{
+			noop ${Direct3D8:SetForceWindowed[${value}]} ${Direct3D9:SetForceWindowed[${value}]} ${Direct3D10:SetForceWindowed[${value}]} ${Direct3D11:SetForceWindowed[${value}]}				
+	}
+
 
     ; Installs a Hotkey, given a name, a key combination, and LavishScript code to execute on PRESS
     method InstallHotkey(string name, string keyCombo, string methodName)
