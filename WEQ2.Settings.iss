@@ -7,6 +7,7 @@ objectdef weq2settings
     variable bool LockGamma=FALSE
     variable bool UseEQPlayNice=FALSE
     variable filepath AgentFolder="${Script.CurrentDirectory~}"
+    variable string Version="${JMB.Agent[WinEQ 2022].Version~}"
 
     variable index:weq2profile Profiles
     variable index:weq2preset Presets
