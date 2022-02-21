@@ -243,6 +243,24 @@
                             },
                             {
                                 "type":"button",
+                                "_dock":"left",
+                                "content":"Create Desktop Shortcut",
+                                "name":"weq2022.createShortcutButton",
+                                "margin":[5,0],
+                                "font":{
+                                    "heightFactor":1.2,
+                                    "bold":true
+                                },
+                                "eventHandlers":{
+                                    "onPress":{
+                                        "type":"method",
+                                        "object":"WEQ2022",
+                                        "method":"OnCreateShortcutButton"
+                                    }
+                                }
+                            },
+                            {
+                                "type":"button",
                                 "_dock":"right",
                                 "content":"Reload Agent",
                                 "font":{
@@ -257,22 +275,7 @@
                                 }
                             }
                         ]
-                    },
-                    {
-                        "type":"dockpanel",
-                        "_dock":"top",
-                        "padding":2,
-                        "horizontalAlignment":"stretch",
-                        "verticalAlignment":"stretch",
-                        "children":[
-                            {
-                                "type":"checkbox",
-                                "_dock":"top",
-                                "content":"Add new Slot when launching"
-                            }
-                        ]
                     }
-                    
                 ]
             }
         },

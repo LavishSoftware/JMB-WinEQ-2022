@@ -25,6 +25,10 @@ objectdef weq2022
         
         ; Load our GUI
         LGUI2:LoadPackageFile[WEQ2022.Uplink.lgui2Package.json]
+        if ${JMB.Build}<6872
+        {
+            LGUI2.Element[weq2022.createShortcutButton]:SetVisibility[Collapsed]
+        }
 
         ; If our JSON settings file does not exist, we should offer to provide defaults or allow the user to import from WinEQ 2
         if !${Settings.SettingsFileExists}
@@ -236,6 +240,58 @@ objectdef weq2022
             }
         }
         return 0
+    }
+
+    method OnCreateShortcutButton()
+    {
+        variable uint NumProfile=${UseProfile.NumProfile}
+        if !${NumProfile}
+        {
+            ; no profile selected
+            echo UseProfile.NumProfile = ${NumProfile}
+            return
+        }
+
+        This:CreateShortcut[${NumProfile}]
+    }
+
+    method CreateShortcut(uint numProfile)
+    {
+        if ${JMB.Build}<6872
+            return
+
+        if !${numProfile}
+            return
+
+        variable string _filename
+        variable string _profileName
+        variable string _iconPath
+        variable string _target
+        variable string _args
+        variable string _workingDirectory
+        variable string _description
+
+        _profileName:Set["${Settings.Profiles[${numProfile}].Name~}"]
+        _filename:Set["%USERPROFILE%\\Desktop\\EverQuest - ${_profileName~}.lnk"]
+        _target:Set["${LavishScript.Executable~}"]
+        _args:Set["WEQ2022:OnLaunchProfileCommand[${numProfile}]"]
+        _workingDirectory:Set["${LavishScript.HomeDirectory~}"]
+        _description:Set["EverQuest - ${_profileName~}"]
+        _iconPath:Set["${Settings.Profiles[${numProfile}].EQPath~}\\eqgame.exe"]
+
+        variable jsonvalue jo
+        jo:SetValue["$$>
+        {
+            "filename":${_filename.AsJSON~},
+            "target":${_target.AsJSON~},
+            "args":${_args.AsJSON~},
+            "workingDirectory":${_workingDirectory.AsJSON~},
+            "description":${_description.AsJSON~},
+            "iconPath":${_iconPath.AsJSON~}
+        }
+        <$$"]
+
+        System:CreateShortcut["${jo.AsJSON~}"]
     }
 
     ; Used by the Joe Multiboxer right-click menu when the user selects a profile from the Launch menu
