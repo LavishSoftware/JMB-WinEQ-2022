@@ -75,6 +75,7 @@ objectdef weq2022session
 ;        LavishScript:RegisterEvent[On Activate]
 ;        LavishScript:RegisterEvent[On Deactivate]
         LavishScript:RegisterEvent[On3DReset]
+        LavishScript:RegisterEvent[EQPN2022.ShouldRenderFrame]
 
         ; Attach to LavishScript events
 ;        Event[OnWindowStateChanging]:AttachAtom[This:OnWindowStateChanging]
@@ -82,6 +83,9 @@ objectdef weq2022session
 ;        Event[On Activate]:AttachAtom[This:OnActivate]
 ;        Event[On Deactivate]:AttachAtom[This:OnDeactivate]
         Event[On3DReset]:AttachAtom[This:On3DReset]
+
+        if ${Settings.UseEQPlayNice}
+            Event[EQPN2022.ShouldRenderFrame]:AttachAtom[This:EQPN2022_ShouldRenderFrame]
 
         ; if the game window is already created, set it up as desired
         if ${Display.Window(exists)}
@@ -215,6 +219,33 @@ objectdef weq2022session
                 break
             case SW_HIDE
                 break
+        }
+    }
+
+    method EQPN2022_ShouldRenderFrame()
+    {
+        /*
+        {
+            "value":true,
+            "currentFrame":73,
+            "lastRenderedFrame":72,
+            "timestamp":75985,
+            "lastFrameTimestamp":75922,
+            "lastRenderedTimestamp":75922
+        }
+        */
+ ;       echo "EQPN2022_ShouldRenderFrame: ${Context~}"
+
+        if ${Display.Foreground}
+            return
+        
+        variable uint diffTime
+        diffTime:Set[${Context.Get[timestamp]} - ${Context.Get[lastRenderedTimestamp]}]
+;        echo diffTime=${diffTime}
+        if ${diffTime} < 1000
+        {
+;            echo not rendering
+            Context:Set["value",FALSE]
         }
     }
 
