@@ -352,6 +352,18 @@ objectdef weq2022session
         return " (${Settings.Hotkeys.Presets[${numPreset}]~})"
     }
 
+    member:uint GetNextSlot()
+    {
+        variable uint Slot=${JMB.Slot}
+        if !${Slot}
+            return 0
+
+        Slot:Inc
+        if ${Slot}>${JMB.Slots.Used}
+            return 1
+
+        return ${Slot}
+    }
     
     member:uint GetPreviousSlot()
     {
