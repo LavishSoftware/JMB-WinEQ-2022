@@ -58,8 +58,7 @@ objectdef weq2settings
         jo:SetReference["joRoot.Get[General]"]
         if !${jo.Reference(exists)}
         {
-            echo joRoot.Get[General]
-            return
+            jo:SetReference[joRoot]
         }
 
         if ${jo.Has[Indicator]}
