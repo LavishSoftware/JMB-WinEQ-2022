@@ -522,6 +522,11 @@
                                                       "viewTemplate":"propertyview.textblock"  
                                                 },
                                                 {
+                                                    "name":"EQClient.ini file",
+                                                    "dataBinding":"_CONTEXT_.Object.EQClientINI",
+                                                    "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
                                                     "name":"Custom Window Text",
                                                     "dataBinding":"_CONTEXT_.Object.WindowText",
                                                     "editTemplate":"propertyview.textbox"
