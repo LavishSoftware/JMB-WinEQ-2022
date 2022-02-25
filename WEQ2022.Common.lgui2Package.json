@@ -1,22 +1,144 @@
 {
     "$schema": "http://www.lavishsoft.com/schema/lgui2Package.json",
-    "skin":{
+    "skin": {
         "name": "WinEQ 2022",
         "brushes": {
-            "window.titleBar.backgroundBrush":{
-                "color":[0.2,0.3,0.4]
+            "wineq2022.background1": {
+                "jsonTemplate": "wineq2022.background1"
+            },
+            "wineq2022.background1dark": {
+                "jsonTemplate": "wineq2022.background1dark"
+            },
+            "wineq2022.background1darker": {
+                "jsonTemplate": "wineq2022.background1darker"
+            },
+            "wineq2022.highlight1": {
+                "jsonTemplate": "wineq2022.highlight1"
+            },
+            "window.titleBar.backgroundBrush": {
+                "jsonTemplate": "wineq2022.background1"
             }
         },
         "templates": {
-            "window.closeButton":{
-                "jsonTemplate":"default:window.closeButton",
-                "borderThickness":[1,1,0,0],
-                "margin":[0,0,0,2]
+            "wineq2022.background1": {
+                "color": [
+                    0.2,
+                    0.3,
+                    0.4
+                ]
             },
-            "window.shadeButton":{
-                "jsonTemplate":"default:window.shadeButton",
-                "borderThickness":[1,1,0,0],
-                "margin":[0,0,2,2]
+            "wineq2022.background1dark": {
+                "color": [
+                    0.1,
+                    0.2,
+                    0.3
+                ]
+            },
+            "wineq2022.background1darker": {
+                "color": [
+                    0.0,
+                    0.1,
+                    0.2
+                ]
+            },
+            "wineq2022.highlight1": {
+                "color": [
+                    0.3,
+                    0.6,
+                    0.3
+                ]
+            },
+            "window.closeButton": {
+                "jsonTemplate": "default:window.closeButton",
+                "borderThickness": [
+                    1,
+                    1,
+                    0,
+                    0
+                ],
+                "margin": [
+                    0,
+                    0,
+                    0,
+                    2
+                ]
+            },
+            "window.shadeButton": {
+                "jsonTemplate": "default:window.shadeButton",
+                "borderThickness": [
+                    1,
+                    1,
+                    0,
+                    0
+                ],
+                "margin": [
+                    0,
+                    0,
+                    2,
+                    2
+                ]
+            },
+            "tab.headerContainer": {
+                "jsonTemplate": "default:tab.headerContainer",
+                "backgroundBrush": "wineq2022.background1darker",
+                "borderBrush": "wineq2022.background1dark",
+                "font": {
+                    "face": "Segoe UI",
+                    "heightFactor": 1.4
+                },
+                "styles": {
+                    "onSelected": {
+                        "font": {
+                            "bold": true
+                        },
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "backgroundBrush": "wineq2022.background1darker",
+                        "borderBrush": "wineq2022.highlight1",
+                        "borderThickness": 2
+                    },
+                    "onDeselected": {
+                        "font": {
+                            "bold": false
+                        },
+                        "color": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "backgroundBrush": "wineq2022.background1darker",
+                        "borderBrush": "wineq2022.background1dark",
+                        "borderThickness": 1
+                    }
+                }
+            },
+            "tab.contentContainer": {
+                "jsonTemplate": "default:tab.contentContainer"
+            },
+            "tabcontrol.contentContainer": {
+                "jsonTemplate": "default:tabcontrol.contentContainer",
+                "backgroundBrush": "wineq2022.background1dark",
+                "borderThickness": 0
+            },
+            "textbox":{
+                "jsonTemplate":"default:textbox",
+                "textBindingUsesFocus":true
+            },
+            "window": {
+                "jsonTemplate": "default:window",
+                "font": {
+                    "face": "Segoe UI",
+                    "height": 14
+                }
+            },
+            "window.titleBar": {
+                "jsonTemplate": "default:window.titleBar"
+            },
+            "window.contentContainer": {
+                "jsonTemplate": "default:window.contentContainer"
             }
         }
     }

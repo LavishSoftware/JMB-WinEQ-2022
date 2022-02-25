@@ -59,10 +59,12 @@
         {
             "type": "window",
             "name": "weq2022.PresetsWindow",
-            "title":"WinEQ 2022: Window Presets",
+            "title":"WinEQ 2022: Window Presets (${WEQ2022Session.Settings.Hotkeys.ShowWindowPresets~})",
             "hideOnClose": true,
             "width":400,
-            "visibility": "visible",
+            "x":100,
+            "y":100,
+            "visibility": "hidden",
             "content": {
                 "type": "dockpanel",
                 "children": [
@@ -113,6 +115,96 @@
                                 "method": "GenerateItemView_Preset"
                             }
                         }
+                    }
+                ]
+            }
+        },
+        {
+            "type":"window",
+            "name": "weq2022.ControlPanel",
+            "title":"WinEQ 2022 Control Panel (${WEQ2022Session.Settings.Hotkeys.ShowGUI~})",
+            "hideOnClose": true,
+            "width":600,
+            "minSize":[300,200],
+            "height":200,
+            "horizontalAlignment":"center",
+            "verticalAlignment":"center",
+            "visibility": "hidden",
+            "content": {
+                "type": "dockpanel",
+                "children": [
+                    {
+                        "type":"dockpanel",
+                        "_dock":"bottom",
+                        "horizontalAlignment":"stretch",
+                        "children":[
+                            {
+                                "type":"button",
+                                "_dock":"right",
+                                "margin":5,
+                                "content":"Window Presets",
+                                "eventHandlers":{
+                                    "onPress":{
+                                        "type":"code",
+                                        "code":"WEQ2022Session:ShowPresetsWindow"
+                                    }
+                                }  
+                            },
+                            {
+                                "type":"button",
+                                "_dock":"right",
+                                "margin":5,
+                                "content":"Show Console",
+                                "eventHandlers":{
+                                    "onPress":{
+                                        "type":"code",
+                                        "code":"LGUI2.Element[consoleWindow]:SetVisibility[Visible]:BubbleToTop"
+                                    }
+                                }  
+                            }
+                        ]
+                    },                    
+                    {
+                        "type":"tabcontrol",
+                        "_dock":"top",
+                        "horizontalAlignment":"stretch",
+                        "verticalAlignment":"stretch",
+                        "tabs":[
+                            {
+                                "type":"tab",
+                                "header":"Status",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "horizontalAlignment":"stretch",
+                                    "font":{
+                                        "heightFactor":1.4
+                                    },
+                                    "padding":5,
+                                    "children":[
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"FPS: ${Display.FPS.Deci} / ${Display.CurrentMaxFPS} (${If[${Display.CurrentMaxFPSCalculate},minimum,maximum]})"
+                                        },
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"Game Resolution: ${Display.Width}x${Display.Height} (${If[${Display.AppWindowed},windowed,fullscreen]})"
+                                        },
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"Window Client Size: ${Display.ViewableWidth}x${Display.ViewableHeight}"
+                                        },
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"Display Monitor: ${Display.Monitor}"
+                                        }
+                                    ]
+                                }
+                            }        
+                        ]
                     }
                 ]
             }

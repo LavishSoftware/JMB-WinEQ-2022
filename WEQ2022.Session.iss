@@ -31,9 +31,9 @@ objectdef weq2022session
     ; Object constructor
     method Initialize()
     {
-        if ${JMB.Build}<6863
+        if ${JMB.Build}<6877
         {
-            echo "WinEQ 2022 requires JMB build 6863 or later"
+            echo "WinEQ 2022 requires JMB build 6877 or later"
             return
         }
 
@@ -86,11 +86,16 @@ objectdef weq2022session
 
         if ${Settings.UseEQPlayNice}
         {
-            EQPlayNice:SetCeiling[1000]
+            EQPlayNice:SetCeiling["${Math.Calc[${Settings.RenderStrobeInterval}*1000]}"]
         }
 
         if ${Settings.LockGamma}
             GammaLock on
+
+        if ${Settings.ForegroundFPS}
+            maxfps -fg -calculate ${Settings.ForegroundFPS}
+        if ${Settings.BackgroundFPS}
+            maxfps -bg -calculate ${Settings.BackgroundFPS}
             
         This:SetForceWindow[1]
 
@@ -214,12 +219,12 @@ objectdef weq2022session
 ;        echo On3DReset        
         variable bool priorState=${GameWindowSetup}
         GameWindowSetup:Set[FALSE]
-        This:SetupGameWindow[${priorState}]
+        timed 3 "WEQ2022Session:SetupGameWindow[${priorState}]"
     }
 
     method OnWindowStateChanging(string newValue)
     {
-;        echo OnWindowStateChanging ${newValue~}
+        echo OnWindowStateChanging ${newValue~}
         switch ${newValue}
         {
             case SW_SHOW
@@ -238,9 +243,6 @@ objectdef weq2022session
     ; Installs a Hotkey, given a name, a key combination, and LavishScript code to execute on PRESS
     method InstallHotkey(string name, string keyCombo, string methodName)
     {
-        ; convert the key combo string from WinEQ 2 to JMB. Mostly just replacing "LButton" with "Mouse1" and so on.
-        keyCombo:Set["${This.ConvertKeyCombo["${keyCombo~}"]}"]
-
         variable jsonvalue joBinding
         ; initialize a LGUI2 input binding object with JSON
         joBinding:SetValue["$$>
@@ -289,6 +291,11 @@ objectdef weq2022session
         if ${Settings.Hotkeys.StoreWindow.NotNULLOrEmpty}
             This:InstallHotkey[weq2022.StoreWindow,"${Settings.Hotkeys.StoreWindow~}","WEQ2022Session:OnHotkey_StoreWindow"]
 
+        if ${Settings.Hotkeys.ShowGUI.NotNULLOrEmpty}
+            This:InstallHotkey[weq2022.ShowGUI,"${Settings.Hotkeys.ShowGUI~}","WEQ2022Session:OnHotkey_ShowGUI"]
+        if ${Settings.Hotkeys.ShowWindowPresets.NotNULLOrEmpty}
+            This:InstallHotkey[weq2022.ShowWindowPresets,"${Settings.Hotkeys.ShowWindowPresets~}","WEQ2022Session:OnHotkey_ShowWindowPresets"]
+
         variable uint i
         for (i:Set[1] ; ${i}<=10 ; i:Inc)
         {
@@ -311,6 +318,9 @@ objectdef weq2022session
         LGUI2:RemoveBinding["weq2022.ToggleIndicator"]
         LGUI2:RemoveBinding["weq2022.ResetWindow"]
         LGUI2:RemoveBinding["weq2022.StoreWindow"]
+        LGUI2:RemoveBinding["weq2022.ShowGUI"]
+        LGUI2:RemoveBinding["weq2022.ShowWindowPresets"]
+        
         variable uint i
         for (i:Set[1] ; ${i}<=10 ; i:Inc)
         {
@@ -391,6 +401,38 @@ objectdef weq2022session
         This:SelectWindowPreset[${numPreset}]
     }
 
+    method ShowPresetsWindow()
+    {
+        if ${LGUI2.Element[weq2022.PresetsWindow].Visibility.Name.Equal[Visible]}
+        {
+            LGUI2.Element[weq2022.PresetsWindow]:SetVisibility[Hidden]
+        }
+        else
+            LGUI2.Element[weq2022.PresetsWindow]:SetVisibility[Visible]:BubbleToTop
+    }
+
+    method ShowGUI()
+    {
+        if ${LGUI2.Element[weq2022.ControlPanel].Visibility.Name.Equal[Visible]}
+        {
+            LGUI2.Element[weq2022.ControlPanel]:SetVisibility[Hidden]
+        }
+        else
+        LGUI2.Element[weq2022.ControlPanel]:SetVisibility[Visible]:BubbleToTop
+    }
+
+    method OnHotkey_ShowGUI()
+    {
+        echo OnHotkey_ShowGUI
+        This:ShowGUI
+    }
+
+    method OnHotkey_ShowWindowPresets()
+    {
+        echo OnHotkey_ShowWindowPresets
+        This:ShowPresetsWindow
+    }
+
     method OnHotkey_ContextMenu()
     {
         echo OnHotkey_ContextMenu
@@ -447,6 +489,8 @@ objectdef weq2022session
         if !${Display.Window(exists)}
             return
 
+        WindowCharacteristics -lock
+
         echo "Performing game window setup ..."
 
         echo "Current Profile: ${CurrentProfile.AsJSON~}"
@@ -497,17 +541,73 @@ objectdef weq2022session
         This:ApplyWindowPreset
     }
 
+    method SetUseEQPlayNice(bool newValue)
+    {
+        echo SetUseEQPlayNice ${newValue}
+        Settings.UseEQPlayNice:Set[${newValue}]
+        if ${newValue}
+        {
+            EQPlayNice:Enable
+            EQPlayNice:SetCeiling["${Math.Calc[${Settings.RenderStrobeInterval}*1000]}"]
+        }
+        else
+        {
+            EQPlayNice:Disable
+        }
+    }
+
+    method SetRenderStrobeInterval(float newValue)
+    {
+        echo SetRenderStrobeInterval ${newValue}
+        Settings.RenderStrobeInterval:Set[${newValue}]
+        EQPlayNice:SetCeiling["${Math.Calc[${newValue}*1000]}"]
+    }
+
+    method SetLockGamma(bool newValue)
+    {
+        echo SetLockGamma ${newValue}
+        Settings.LockGamma:Set[${newValue}]
+        if ${newValue}
+            GammaLock on
+        else
+            GammaLock off
+    }
+
+    method SetForegroundFPS(uint newValue)
+    {
+        echo SetForegroundFPS ${newValue}
+        Settings.ForegroundFPS:Set[${newValue}]
+
+        if ${newValue}
+            maxfps -fg -calculate ${newValue}
+        else
+            maxfps -fg -disable
+    }
+
+    method SetBackgroundFPS(uint newValue)
+    {
+        echo SetBackgroundFPS ${newValue}
+        Settings.BackgroundFPS:Set[${newValue}]
+
+        if ${newValue}
+            maxfps -bg -calculate ${newValue}
+        else
+            maxfps -bg -disable
+    }
+
     ; applies the current window preset
     method ApplyWindowPreset()
-    {
-        ; make sure we HAVE a current window preset
-        if !${CurrentPreset.Reference(exists)}
-            return
-
-        ; make sure the game window currently exists, otherwise we have nothing to do yet
+    {  
+           ; make sure the game window currently exists, otherwise we have nothing to do yet
         if !${Display.Window(exists)}
             return
 
+         ;   windowscale 100
+        ; make sure we HAVE a current window preset
+        if !${CurrentPreset.Reference(exists)}
+        {
+            return
+        }
         echo "Applying Window Preset ${CurrentPreset.Name~}"
         echo "${CurrentPreset.AsJSON~}"
 
@@ -548,7 +648,10 @@ objectdef weq2022session
         sizeX:Set[${Display.Width}*${useScale}]
         sizeY:Set[${Display.Height}*${useScale}]
 
-        WindowCharacteristics -stealth -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+        if ${useScale}!=1.0
+            WindowCharacteristics -stealth -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+        else
+            WindowCharacteristics -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
         
     }
 
@@ -563,12 +666,6 @@ objectdef weq2022session
     method ApplySelectedPreset()
     {
         This:SelectWindowPreset[${SelectedPreset}]
-    }
-
-    ; Converts a WinEQ 2 key combo like "Shift+RButton" to a JMB format like "Shift+Mouse1"
-    member:string ConvertKeyCombo(string keyCombo)
-    {
-        return "${keyCombo.ReplaceSubstring["LButton","Mouse1"].ReplaceSubstring["RButton","Mouse2"].ReplaceSubstring["MButton","Mouse3"].ReplaceSubstring["XButton1","Mouse4"].ReplaceSubstring["XButton2","Mouse5"]~}"
     }
 
     ; generate a listbox view of a preset

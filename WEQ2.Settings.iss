@@ -6,8 +6,12 @@ objectdef weq2settings
     variable int IndicatorY=28
     variable bool LockGamma=FALSE
     variable bool UseEQPlayNice=FALSE
+    variable float RenderStrobeInterval=1.0
     variable filepath AgentFolder="${Script.CurrentDirectory~}"
     variable string Version="${JMB.Agent[WinEQ 2022].Version~}"
+
+    variable uint ForegroundFPS=60
+    variable uint BackgroundFPS=60
 
     variable index:weq2profile Profiles
     variable index:weq2preset Presets
@@ -30,6 +34,9 @@ objectdef weq2settings
             "IndicatorY":${IndicatorY.AsJSON~},
             "LockGamma":${LockGamma.AsJSON~},
             "EQPlayNice":${UseEQPlayNice.AsJSON~},
+            "RenderStrobeInterval":${RenderStrobeInterval.AsJSON~},
+            "BackgroundFPS":${BackgroundFPS.AsJSON~},
+            "ForegroundFPS":${ForegroundFPS.AsJSON~},
             "Hotkeys":${Hotkeys.AsJSON~}
         }
         <$$"]
@@ -76,6 +83,15 @@ objectdef weq2settings
         if ${jo.Has[EQPlayNice]}
             UseEQPlayNice:Set["${jo.Get[EQPlayNice]~}"]
 
+        if ${jo.Has[RenderStrobeInterval]}
+            RenderStrobeInterval:Set["${jo.Get[RenderStrobeInterval]~}"]
+
+        if ${jo.Has[ForegroundFPS]}
+            ForegroundFPS:Set["${jo.Get[ForegroundFPS]~}"]
+        if ${jo.Has[BackgroundFPS]}
+            BackgroundFPS:Set["${jo.Get[BackgroundFPS]~}"]
+
+
         jo:SetReference["joRoot.Get[Hotkeys]"]
         if ${jo.Reference(exists)}
         {
@@ -103,7 +119,7 @@ objectdef weq2settings
         }
 
         ; inform the GUI that we have updated our list of profiles
-        LGUI2.Element[weq2ps.events]:FireEventHandler[onProfilesUpdated]
+        LGUI2.Element[weq2022.events]:FireEventHandler[onProfilesUpdated]
     }
 
     ; Determine if our settings file exists
@@ -164,6 +180,8 @@ objectdef weq2hotkeys
     variable string ToggleIndicator
     variable string ResetWindow
     variable string StoreWindow
+    variable string ShowGUI="Ctrl+Shift+Alt+G"
+    variable string ShowWindowPresets="Ctrl+Shift+Alt+P"
     variable index:string Presets
     variable index:string Globals
 
@@ -173,6 +191,12 @@ objectdef weq2hotkeys
         Globals:Resize[10]
     }
 
+    ; Converts a WinEQ 2 key combo like "Shift+RButton" to a JMB format like "Shift+Mouse1"
+    member:string ConvertKeyCombo(string keyCombo)
+    {
+        return "${keyCombo.ReplaceSubstring["LButton","Mouse1"].ReplaceSubstring["RButton","Mouse2"].ReplaceSubstring["MButton","Mouse3"].ReplaceSubstring["XButton1","Mouse4"].ReplaceSubstring["XButton2","Mouse5"]~}"
+    }
+
     ; Given a JSON snapshot, fill in all of our variables
     method FromJSON(jsonvalueref jo)
     {
@@ -180,37 +204,42 @@ objectdef weq2hotkeys
 ;        echo "Hotkeys:FromJSON[${jo~}]"
 
         if ${jo.Has["ContextMenu"]}
-            ContextMenu:Set["${jo.Get[ContextMenu]~}"]
+            ContextMenu:Set["${This.ConvertKeyCombo["${jo.Get[ContextMenu]~}"]~}"]
 
         if ${jo.Has["NextSession"]}
-            NextSession:Set["${jo.Get[NextSession]~}"]
+            NextSession:Set["${This.ConvertKeyCombo["${jo.Get[NextSession]~}"]~}"]
         if ${jo.Has["PrevSession"]}
-            PrevSession:Set["${jo.Get[PrevSession]~}"]
+            PrevSession:Set["${This.ConvertKeyCombo["${jo.Get[PrevSession]~}"]~}"]
         if ${jo.Has["Duplicate"]}
-            Duplicate:Set["${jo.Get[Duplicate]~}"]
+            Duplicate:Set["${This.ConvertKeyCombo["${jo.Get[Duplicate]~}"]~}"]
         if ${jo.Has["TogglePIPLock"]}
-            TogglePIPLock:Set["${jo.Get[TogglePIPLock]~}"]
+            TogglePIPLock:Set["${This.ConvertKeyCombo["${jo.Get[TogglePIPLock]~}"]~}"]
 
         if ${jo.Has["TogglePIP"]}
-            TogglePIP:Set["${jo.Get[TogglePIP]~}"]
+            TogglePIP:Set["${This.ConvertKeyCombo["${jo.Get[TogglePIP]~}"]~}"]
         if ${jo.Has["ToggleBorder"]}
-            ToggleBorder:Set["${jo.Get[ToggleBorder]~}"]
+            ToggleBorder:Set["${This.ConvertKeyCombo["${jo.Get[ToggleBorder]~}"]~}"]
         if ${jo.Has["ToggleTiling"]}
-            ToggleTiling:Set["${jo.Get[ToggleTiling]~}"]
+            ToggleTiling:Set["${This.ConvertKeyCombo["${jo.Get[ToggleTiling]~}"]~}"]
         if ${jo.Has["ToggleIndicator"]}
-            ToggleIndicator:Set["${jo.Get[ToggleIndicator]~}"]
+            ToggleIndicator:Set["${This.ConvertKeyCombo["${jo.Get[ToggleIndicator]~}"]~}"]
         if ${jo.Has["ResetWindow"]}
-            ResetWindow:Set["${jo.Get[ResetWindow]~}"]
+            ResetWindow:Set["${This.ConvertKeyCombo["${jo.Get[ResetWindow]~}"]~}"]
 
         if ${jo.Has["StoreWindow"]}
-            StoreWindow:Set["${jo.Get[StoreWindow]~}"]
+            StoreWindow:Set["${This.ConvertKeyCombo["${jo.Get[StoreWindow]~}"]~}"]
+
+        if ${jo.Has["ShowGUI"]}
+            ShowGUI:Set["${This.ConvertKeyCombo["${jo.Get[ShowGUI]~}"]~}"]
+        if ${jo.Has["ShowWindowPresets"]}
+            ShowWindowPresets:Set["${This.ConvertKeyCombo["${jo.Get[ShowWindowPresets]~}"]~}"]
 
         for (i:Set[1] ; ${i}<=10 ; i:Inc)
         {
             if ${jo.Has["Preset${i}"]}
-                Presets:Set[${i},"${jo.Get[Preset${i}]~}"]
+                Presets:Set[${i},"${This.ConvertKeyCombo["${jo.Get[Preset${i}]~}"]~}"]
             if ${jo.Has["Global${i}"]}
-                Globals:Set[${i},"${jo.Get[Global${i}]~}"]
+                Globals:Set[${i},"${This.ConvertKeyCombo["${jo.Get[Global${i}]~}"]~}"]
         }
     }
 
@@ -230,7 +259,9 @@ objectdef weq2hotkeys
             "ToggleTiling":${ToggleTiling.AsJSON~},
             "ToggleIndicator":${ToggleIndicator.AsJSON~},
             "ResetWindow":${ResetWindow.AsJSON~},
-            "StoreWindow":${StoreWindow.AsJSON~}
+            "StoreWindow":${StoreWindow.AsJSON~},
+            "ShowGUI":${ShowGUI.AsJSON~},
+            "ShowWindowPresets":${ShowWindowPresets.AsJSON~}
         }
         <$$"]
 
@@ -461,6 +492,13 @@ objectdef weq2preset
             Scale:Set["${jo.Get[Scale]~}"]
     }
 
+    method SetName(string newValue)
+    {
+        Name:Set["${newValue~}"]
+        ; inform the GUI that we have updated our list of profiles
+        LGUI2.Element[weq2022.events]:FireEventHandler[onPresetsUpdated]
+    }
+
     ; Generate a one-line summary of the preset
     member:string Summary()
     {
@@ -483,7 +521,6 @@ objectdef weq2preset
         jo:SetValue["$$>
         {
             "Name":${Name.AsJSON~},
-            "WindowText":${WindowText.AsJSON~},
             "X":${X.AsJSON~},
             "Y":${Y.AsJSON~},
             "AlwaysOnTop":${AlwaysOnTop.AsJSON~},

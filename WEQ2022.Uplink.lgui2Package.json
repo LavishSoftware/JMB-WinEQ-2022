@@ -101,6 +101,16 @@
               "Scale":1.0
             }
         },
+        "weq2022.devProvider":{
+            "name": "WinEQ-2022-dev",
+            "platform": "joemultiboxer",
+            "listings": {                
+                "WinEQ-2022-dev": {
+                    "name": "WinEQ 2022",
+                    "localDevPath": "C:\\Users\\joeth\\Documents\\JMB Work\\JMB-WinEQ-2022\\"
+                }
+            }
+        },
         "weq2022.profileView":{
             "jsonTemplate":"listboxitem",
             "padding":2,
@@ -111,7 +121,18 @@
                 "pullReplaceNull":""
               }
             }
-          }      
+          },
+          "weq2022.presetView":{
+              "jsonTemplate":"listboxitem",
+              "padding":2,
+              "content":{
+                "type":"textblock",
+                "textBinding":{
+                  "pullFormat":"${_CONTEXTITEMDATA_.Get[NumPreset]}: ${_CONTEXTITEMDATA_.Get[Name]}",
+                  "pullReplaceNull":""
+                }
+              }
+            }      
     },
     "elements": [
         {
@@ -124,8 +145,9 @@
             "name":"weq2022.MainWindow",
             "hideOnClose":true,
             "title":"WinEQ 2022 Joe Multiboxer Edition",
-            "width":500,
+            "width":750,
             "height":400,
+            "minSize":[600,300],
             "horizontalAlignment":"center",
             "verticalAlignment":"center",
             "visibility": "hidden",
@@ -136,146 +158,630 @@
                 "children":[
                     {
                         "type":"dockpanel",
-                        "_dock":"top",
-                        "padding":2,
-                        "horizontalAlignment": "stretch",
-                        "heightFactor":0.5,
+                        "_dock":"bottom",
+                        "backgroundBrush": "wineq2022.background1dark",
+                        "horizontalAlignment":"stretch",
+                        "margin":[5,0,5,5],
                         "children":[
                             {
-                                "type":"textblock",
-                                "text":"Profiles",
-                                "_dock":"top"
-                            },
-                            {
-                                "type":"listbox",
-                                "_dock":"left",
-                                "widthFactor":0.3,
-                                "verticalAlignment": "stretch",
-                                "name":"weq2022.UseProfile",
-                                "itemsBinding":{
-                                    "pullFormat": "${WEQ2022.Profiles.AsJSON}",
-                                    "pullHook": {   
-                                      "elementName": "weq2022.events",
-                                      "flags": "global",
-                                      "event": "onProfilesUpdated"
-                                    }
-                                },
-                                "selectedItemBinding":{
-                                    "pullFormat":"${WEQ2022.UseProfile.Name}",
-                                    "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
-                                },
-                                "selectedItemBindingProperty":"Name",
-                                "itemViewGenerators":{
-                                    "default":{
-                                      "type":"method",
-                                      "object":"WEQ2022",
-                                      "method":"GenerateItemView_Profile"
+                                "type":"button",
+                                "_dock":"right",
+                                "content":"Save",
+                                "margin":5,
+                                "eventHandlers":{
+                                    "onRelease":{
+                                        "type":"code",
+                                        "code":"WEQ2022:Save"
                                     }
                                 }
-                            },
-                            {
-                                "type":"objectview",
-                                "_dock":"top",
-                                "horizontalAlignment":"stretch",
-                                "verticalAlignment":"stretch",
-                                "objectBinding": {
-                                    "pullFormat":"${WEQ2022.UseProfile}"
-                                },
-                                "properties":[
-                                    {
-                                        "name":"Name",
-                                        "dataBinding":{
-                                          "pullFormat":"${_CONTEXT_.Object.Name}",
-                                          "pullReplaceNull":""
-                                        },
-                                        "viewTemplate":"propertyview.textblock"                            
-                                    },
-                                    {
-                                        "name":"EverQuest Path",
-                                        "dataBinding":{
-                                            "pullFormat":"${_CONTEXT_.Object.EQPath}",
-                                            "pullReplaceNull":""
-                                          },
-                                          "viewTemplate":"propertyview.textblock"  
-                                    },
-                                    {
-                                        "name":"Use Patcher",
-                                        "dataBinding":{
-                                            "pullFormat":"${_CONTEXT_.Object.Patch}",
-                                            "pullReplaceNull":""
-                                          },
-                                          "viewTemplate":"propertyview.checkbox"  
-                                    },
-                                    {
-                                        "name":"JMB Game",
-                                        "dataBinding":{
-                                            "pullFormat":"${_CONTEXT_.Object.UseGame}",
-                                            "pullReplaceNull":""
-                                          },
-                                          "viewTemplate":"propertyview.textblock"  
-                                    }
-                                ]
                             }
                         ]
                     },
                     {
-                        "type":"dockpanel",
+                        "type":"tabcontrol",
                         "_dock":"top",
-                        "padding":2,
-                        "horizontalAlignment":"stretch",
-                        "verticalAlignment":"stretch",
-                        "children":[
+                        "margin":[5,5,5,0],
+                        "tabs":[
                             {
-                                "type":"button",
-                                "_dock":"left",
-                                "content":"Launch",
-                                "font":{
-                                    "heightFactor":1.2,
-                                    "bold":true
-                                },
-                                "eventHandlers":{
-                                    "onPress":{
-                                        "type":"method",
-                                        "object":"WEQ2022",
-                                        "method":"OnLaunchButton"
-                                    }
+                                "type":"tab",
+                                "header":"Launcher",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "horizontalAlignment": "stretch",
+                                    "verticalAlignment": "stretch",
+                                    "children":[
+                                        {
+                                            "type":"dockpanel",
+                                            "_dock":"top",
+                                            "padding":2,
+                                            "horizontalAlignment": "stretch",
+                                            "heightFactor":0.5,
+                                            "children":[
+                                                {
+                                                    "type":"textblock",
+                                                    "text":"Profiles",
+                                                    "_dock":"top"
+                                                },
+                                                {
+                                                    "type":"listbox",
+                                                    "_dock":"left",
+                                                    "widthFactor":0.3,
+                                                    "verticalAlignment": "stretch",
+                                                    "name":"weq2022.UseProfile",
+                                                    "itemsBinding":{
+                                                        "pullFormat": "${WEQ2022.Profiles.AsJSON}",
+                                                        "pullHook": {   
+                                                          "elementName": "weq2022.events",
+                                                          "flags": "global",
+                                                          "event": "onProfilesUpdated"
+                                                        }
+                                                    },
+                                                    "selectedItemBinding":{
+                                                        "pullFormat":"${WEQ2022.UseProfile.Name}",
+                                                        "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
+                                                    },
+                                                    "selectedItemBindingProperty":"Name",
+                                                    "itemViewGenerators":{
+                                                        "default":{
+                                                          "type":"template",
+                                                          "template":"weq2022.profileView"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type":"objectview",
+                                                    "_dock":"top",
+                                                    "horizontalAlignment":"stretch",
+                                                    "verticalAlignment":"stretch",
+                                                    "objectBinding": {
+                                                        "pullFormat":"${WEQ2022.UseProfile}"
+                                                    },
+                                                    "properties":[
+                                                        {
+                                                            "name":"Name",
+                                                            "dataBinding":{
+                                                              "pullFormat":"${_CONTEXT_.Object.Name}",
+                                                              "pullReplaceNull":""
+                                                            },
+                                                            "viewTemplate":"propertyview.textblock"                            
+                                                        },
+                                                        {
+                                                            "name":"EverQuest Path",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.EQPath}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.textblock"  
+                                                        },
+                                                        {
+                                                            "name":"Use Patcher",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.Patch}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.checkbox"  
+                                                        },
+                                                        {
+                                                            "name":"JMB Game",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.UseGame}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.textblock"  
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type":"dockpanel",
+                                            "_dock":"top",
+                                            "padding":2,
+                                            "horizontalAlignment":"stretch",
+                                            "verticalAlignment":"stretch",
+                                            "children":[
+                                                {
+                                                    "type":"button",
+                                                    "_dock":"left",
+                                                    "content":"Launch",
+                                                    "font":{
+                                                        "heightFactor":1.2,
+                                                        "bold":true
+                                                    },
+                                                    "eventHandlers":{
+                                                        "onPress":{
+                                                            "type":"method",
+                                                            "object":"WEQ2022",
+                                                            "method":"OnLaunchButton"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type":"button",
+                                                    "_dock":"left",
+                                                    "content":"Create Desktop Shortcut",
+                                                    "name":"weq2022.createShortcutButton",
+                                                    "margin":[5,0],
+                                                    "font":{
+                                                        "heightFactor":1.2,
+                                                        "bold":true
+                                                    },
+                                                    "eventHandlers":{
+                                                        "onPress":{
+                                                            "type":"method",
+                                                            "object":"WEQ2022",
+                                                            "method":"OnCreateShortcutButton"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type":"button",
+                                                    "_dock":"right",
+                                                    "content":"Reload Agent",
+                                                    "font":{
+                                                        "heightFactor":1.2,
+                                                        "bold":true
+                                                    },
+                                                    "eventHandlers":{
+                                                        "onPress":{
+                                                            "type":"code",
+                                                            "code":"WEQ2022:Restart"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             },
                             {
-                                "type":"button",
-                                "_dock":"left",
-                                "content":"Create Desktop Shortcut",
-                                "name":"weq2022.createShortcutButton",
-                                "margin":[5,0],
-                                "font":{
-                                    "heightFactor":1.2,
-                                    "bold":true
-                                },
-                                "eventHandlers":{
-                                    "onPress":{
-                                        "type":"method",
-                                        "object":"WEQ2022",
-                                        "method":"OnCreateShortcutButton"
-                                    }
+                                "type":"tab",
+                                "header":"General Settings",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "padding":5,
+                                    "children":[
+                                        {
+                                            "type":"checkbox",
+                                            "_dock":"top",
+                                            "content":"Lock Gamma",
+                                            "tooltip":"When enabled, prevents the game from adjusting system-wide Gamma.\nOtherwise, EverQuest may adjust the brightness to undesired levels.",
+                                            "checkedBinding":{
+                                                "pullFormat":"${WEQ2022.Settings.LockGamma}",
+                                                "pushFormat":["WEQ2022:SetLockGamma[","]"]
+                                            }
+                                        }
+                                    ]
                                 }
                             },
                             {
-                                "type":"button",
-                                "_dock":"right",
-                                "content":"Reload Agent",
-                                "font":{
-                                    "heightFactor":1.2,
-                                    "bold":true
-                                },
-                                "eventHandlers":{
-                                    "onPress":{
-                                        "type":"code",
-                                        "code":"JMB.Agent[WinEQ 2022]:Stop:Start"
-                                    }
+                                "type":"tab",
+                                "header":"FPS / EQPlayNice",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "padding":5,
+                                    "children":[
+                                        {
+                                            "type":"checkbox",
+                                            "_dock":"top",
+                                            "content":"Use EQPlayNice Render Strobing",
+                                            "tooltip":"Improves EverQuest framerate (FPS), allowing better movement speed and auto-follow precision, as well as PC and multi-boxing performance.\nThis is achieved by only allowing the game world to render at a specified interval.",
+                                            "checkedBinding":{
+                                                "pullFormat":"${WEQ2022.Settings.UseEQPlayNice}",
+                                                "pushFormat":["WEQ2022:SetUseEQPlayNice[","]"]
+                                            }
+                                        },
+                                        {
+                                            "type":"stackpanel",
+                                            "_dock":"top",
+                                            "margin":[0,5,0,0],
+                                            "orientation":"horizontal",
+                                            "children":[
+                                                {
+                                                    "type":"textblock",
+                                                    "text":"Render Strobe Interval: "
+                                                },
+                                                {
+                                                    "type":"textbox",
+                                                    "minSize":[80,0],
+                                                    "textBinding":{
+                                                     "pullFormat":"${WEQ2022.Settings.RenderStrobeInterval}",
+                                                     "pushFormat":["WEQ2022:SetRenderStrobeInterval[","]"]
+                                                    }
+                                                },
+                                                {
+                                                    "type":"textblock",
+                                                    "text":" (0 to disable limit, same as un-checking Render Strobing option)"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type":"stackpanel",
+                                            "_dock":"top",
+                                            "margin":[0,5,0,0],
+                                            "orientation":"horizontal",
+                                            "children":[
+                                                {
+                                                    "type":"textblock",
+                                                    "text":"Maximum FPS (Foreground): "
+                                                },
+                                                {
+                                                    "type":"textbox",
+                                                    "minSize":[50,0],
+                                                    "textBinding":{
+                                                     "pullFormat":"${WEQ2022.Settings.ForegroundFPS}",
+                                                     "pushFormat":["WEQ2022:SetForegroundFPS[","]"]
+                                                    }
+                                                },
+                                                {
+                                                    "type":"textblock",
+                                                    "text":" (0 to disable limit)"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type":"stackpanel",
+                                            "_dock":"top",
+                                            "margin":[0,5,0,0],
+                                            "orientation":"horizontal",
+                                            "children":[
+                                                {
+                                                    "type":"textblock",
+                                                    "text":"Maximum FPS (Background): "
+                                                },
+                                                {
+                                                    "type":"textbox",
+                                                    "minSize":[50,0],
+                                                    "textBinding":{
+                                                     "pullFormat":"${WEQ2022.Settings.BackgroundFPS}"   ,
+                                                     "pushFormat":["WEQ2022:SetBackgroundFPS[","]"]
+                                                    }
+                                                },
+                                                {
+                                                    "type":"textblock",
+                                                    "text":" (0 to disable limit)"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "type":"tab",
+                                "header":"Profiles",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "horizontalAlignment":"stretch",
+                                    "children":[
+                                        {
+                                            "type":"listbox",
+                                            "_dock":"left",
+                                            "widthFactor":0.3,
+                                            "verticalAlignment": "stretch",
+                                            "name":"weq2022.UseProfile",
+                                            "itemsBinding":{
+                                                "pullFormat": "${WEQ2022.Settings.Profiles.AsJSON}",
+                                                "pullHook": {   
+                                                  "elementName": "weq2022.events",
+                                                  "flags": "global",
+                                                  "event": "onProfilesUpdated"
+                                                }
+                                            },
+                                            "selectedItemBinding":{
+                                                "pullFormat":"${WEQ2022.UseProfile.Name}",
+                                                "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
+                                            },
+                                            "selectedItemBindingProperty":"Name",
+                                            "itemViewGenerators":{
+                                                "default":{
+                                                  "type":"template",
+                                                  "template":"weq2022.profileView"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type":"objectview",
+                                            "_dock":"top",
+                                            "horizontalAlignment":"stretch",
+                                            "verticalAlignment":"stretch",
+                                            "objectBinding": {
+                                                "pullFormat":"${WEQ2022.UseProfile}"
+                                            },
+                                            "properties":[
+                                                {
+                                                    "name":"Name",
+                                                    "dataBinding":{
+                                                      "pullFormat":"${_CONTEXT_.Object.Name}",
+                                                      "pullReplaceNull":"",
+                                                      "pushFormat":["_CONTEXT_.Object:SetName[","]"]
+                                                    },
+                                                    "editTemplate":"propertyview.textbox"                            
+                                                },
+                                                {
+                                                    "name":"EverQuest Path",
+                                                    "dataBinding":{
+                                                        "pullFormat":"${_CONTEXT_.Object.EQPath}",
+                                                        "pullReplaceNull":""
+                                                      },
+                                                      "viewTemplate":"propertyview.textblock"  
+                                                },
+                                                {
+                                                    "name":"Use Patcher",
+                                                    "dataBinding":{
+                                                        "pullFormat":"${_CONTEXT_.Object.Patch}",
+                                                        "pullReplaceNull":""
+                                                      },
+                                                      "viewTemplate":"propertyview.checkbox"  
+                                                },
+                                                {
+                                                    "name":"JMB Game",
+                                                    "dataBinding":{
+                                                        "pullFormat":"${_CONTEXT_.Object.UseGame}",
+                                                        "pullReplaceNull":""
+                                                      },
+                                                      "viewTemplate":"propertyview.textblock"  
+                                                },
+                                                {
+                                                    "name":"Custom Window Text",
+                                                    "dataBinding":"_CONTEXT_.Object.WindowText",
+                                                    "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Global Hotkey",
+                                                    "dataBinding":"_CONTEXT_.Object.GlobalHotkey",
+                                                    "editTemplate":"propertyview.textbox"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "type":"tab",
+                                "header":"Hotkeys",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "horizontalAlignment":"stretch",
+                                    "children":[
+                                        {
+                                            "type":"objectview",
+                                            "_dock":"top",
+                                            "horizontalAlignment":"stretch",
+                                            "verticalAlignment":"stretch",
+                                            "objectBinding": {
+                                                "pullFormat":"${WEQ2022.Settings.Hotkeys}"
+                                            },
+                                            "properties":[
+                                                {
+                                                    "name":"Show GUI",
+                                                    "dataBinding":"_CONTEXT_.Object.ShowGUI",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Next Session",
+                                                    "dataBinding":"_CONTEXT_.Object.NextSession",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Previous Session",
+                                                    "dataBinding":"_CONTEXT_.Object.PrevSession",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 1",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[1]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 2",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[2]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 3",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[3]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 4",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[4]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 5",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[5]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 6",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[6]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 7",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[7]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 8",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[8]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 9",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[9]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 10",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[10]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 1",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[1]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 2",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[2]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 3",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[3]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 4",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[4]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 5",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[5]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 6",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[6]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 7",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[7]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 8",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[8]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 9",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[9]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Window Preset 10",
+                                                    "dataBinding":"_CONTEXT_.Object.Presets[10]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                }
+                                            ]
+                                        }          
+                                    ]
+                                }
+                            },
+                            {
+                                "type":"tab",
+                                "header":"Window Presets",
+                                "content":{
+                                    "type":"dockpanel",
+                                    "horizontalAlignment":"stretch",
+                                    "padding":5,
+                                    "children":[
+                                        {
+                                            "type":"listbox",
+                                            "_dock":"left",
+                                            "width":150,
+                                            "verticalAlignment": "stretch",
+                                            "name":"weq2022.SelectedPreset",
+                                            "itemsBinding":{
+                                                "pullFormat": "${WEQ2022.Settings.Presets.AsJSON}",
+                                                "pullHook": {   
+                                                  "elementName": "weq2022.events",
+                                                  "flags": "global",
+                                                  "event": "onPresetsUpdated"
+                                                }
+                                            },
+                                            "selectedItemBinding":{
+                                                "pullFormat":"${WEQ2022.SelectedPreset.NumPreset}",
+                                                "pushFormat":["WEQ2022:SelectPreset[\"","\"]"]
+                                            },
+                                            "selectedItemBindingProperty":"NumPreset",
+                                            "itemViewGenerators":{
+                                                "default":{
+                                                  "type":"template",
+                                                  "template":"weq2022.presetView"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type":"objectview",
+                                            "_dock":"top",
+                                            "horizontalAlignment":"stretch",
+                                            "verticalAlignment":"stretch",
+                                            "objectBinding": {
+                                                "pullFormat":"${WEQ2022.SelectedPreset}"
+                                            },
+                                            "properties":[
+                                                {
+                                                    "name":"Name",
+                                                    "dataBinding":{
+                                                      "pullFormat":"${_CONTEXT_.Object.Name}",
+                                                      "pullReplaceNull":"",
+                                                      "pushFormat":["_CONTEXT_.Object:SetName[","]"]
+                                                    },
+                                                    "editTemplate":"propertyview.textbox"                            
+                                                },
+                                                {
+                                                    "name":"X",
+                                                    "dataBinding":"_CONTEXT_.Object.X",                                                  
+                                                      "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Y",
+                                                    "dataBinding":"_CONTEXT_.Object.Y",                                                  
+                                                    "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Always On Top",
+                                                    "dataBinding":"_CONTEXT_.Object.AlwaysOnTop",                                                  
+                                                    "editTemplate":"propertyview.checkbox"
+                                                },
+                                                {
+                                                    "name":"Full Screen",
+                                                    "dataBinding":"_CONTEXT_.Object.FullScreen",                                                  
+                                                    "editTemplate":"propertyview.checkbox"
+                                                },
+                                                {
+                                                    "name":"Lock Position",
+                                                    "dataBinding":"_CONTEXT_.Object.LockPosition",                                                  
+                                                    "editTemplate":"propertyview.checkbox"
+                                                },
+                                                {
+                                                    "name":"Lock Size",
+                                                    "dataBinding":"_CONTEXT_.Object.LockSize",                                                  
+                                                    "editTemplate":"propertyview.checkbox"
+                                                },
+                                                {
+                                                    "name":"Border",
+                                                    "dataBinding":"_CONTEXT_.Object.Border",                                                  
+                                                    "editTemplate":"propertyview.checkbox"
+                                                },
+                                                {
+                                                    "name":"Scale multiplier",
+                                                    "controlData":{
+                                                    "tooltip":"1.0 being 100% scale, 1.5 being 150% scale"
+                                                    },
+                                                    "dataBinding":"_CONTEXT_.Object.Scale",                                                  
+                                                    "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Summary",
+                                                    "dataBinding":{
+                                                        "pullFormat":"${_CONTEXT_.Object.Summary}",
+                                                        "pullReplaceNull":""
+                                                      },
+                                                      "viewTemplate":"propertyview.textblock"  
+                                                }
+                                            ]
+                                        }                                
+                                    ]
                                 }
                             }
                         ]
-                    }
+                    }                    
                 ]
             }
         },

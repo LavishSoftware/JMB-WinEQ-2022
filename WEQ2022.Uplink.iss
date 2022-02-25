@@ -12,23 +12,25 @@ objectdef weq2022
     ; Reference to the currently selected Profile
     variable weakref UseProfile
 
+    ; Reference to the currently selected Window Preset
+    variable weakref SelectedPreset
+
     ; Object constructor
     method Initialize()
     {
         variable filepath fpFolder="${WinEQ2Folder~}"
         
-        if ${JMB.Build}<6863
+        if ${JMB.Build}<6877
         {
-            echo "WinEQ 2022 requires JMB build 6863 or later"
+            echo "WinEQ 2022 requires JMB build 6877 or later"
             return
         }
         
         ; Load our GUI
         LGUI2:LoadPackageFile[WEQ2022.Uplink.lgui2Package.json]
-        if ${JMB.Build}<6872
-        {
-            LGUI2.Element[weq2022.createShortcutButton]:SetVisibility[Collapsed]
-        }
+        This:AddAgentProvider
+
+        LGUI2.Element[weq2022.MainWindow]:SetTitle["\"WinEQ 2022 Joe Multiboxer Edition v${Settings.Version}\""]
 
         ; If our JSON settings file does not exist, we should offer to provide defaults or allow the user to import from WinEQ 2
         if !${Settings.SettingsFileExists}
@@ -54,12 +56,14 @@ objectdef weq2022
         }
 
         This:SetProfile["WinEQ 2.0 Default Profile"]
+        This:SelectPreset[1]
         This:InstallMenu
     }
 
     ; Object destructor
     method Shutdown()
     {
+        This:RemoveAgentProvider
         LGUI2:UnloadPackageFile[WEQ2022.Uplink.lgui2Package.json]
     }
 
@@ -393,20 +397,6 @@ objectdef weq2022
         LGUI2.Element[weq2022.MainWindow]:SetVisibility[Visible]:BubbleToTop
     }
 
-    ; Generate a listbox item view of a Profile
-    method GenerateItemView_Profile()
-	{
-       ; echo GenerateItemView_Profile ${Context(type)} ${Context.Args}
-
-		; build an itemview lgui2element json
-		variable jsonvalue joListBoxItem
-        ; Here we use our "weq2022.profileView" template defined in our LGUI2 package file
-		joListBoxItem:SetValue["${LGUI2.Template["weq2022.profileView"].AsJSON~}"]
-        		
-        ; set the view!
-		Context:SetView["${joListBoxItem.AsJSON~}"]
-	}
-
     ; Get a reference to a profile, by name
     member:weakref FindProfile(string name)
     {
@@ -430,6 +420,67 @@ objectdef weq2022
         UseProfile:SetReference["This.FindProfile[\"${name~}\"]"]
     }
 
+    method SelectPreset(uint id)
+    {
+        SelectedPreset:SetReference["This.Settings.Presets[${id}]"]
+    }
+
+    method SetLockGamma(bool newValue)
+    {
+        if ${newValue}==${Settings.LockGamma}
+            return
+
+        Settings.LockGamma:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetLockGamma[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method SetUseEQPlayNice(bool newValue)
+    {
+        if ${newValue}==${Settings.UseEQPlayNice}
+            return
+
+        Settings.UseEQPlayNice:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetUseEQPlayNice[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method SetRenderStrobeInterval(float newValue)
+    {
+        if ${newValue}==${Settings.RenderStrobeInterval}
+            return
+
+        Settings.RenderStrobeInterval:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetRenderStrobeInterval[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method SetForegroundFPS(uint newValue)
+    {
+        if ${newValue}==${Settings.ForegroundFPS}
+            return
+
+        Settings.ForegroundFPS:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetForegroundFPS[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method SetBackgroundFPS(uint newValue)
+    {
+        if ${newValue}==${Settings.BackgroundFPS}
+            return
+
+        Settings.BackgroundFPS:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetBackgroundFPS[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method Save()
+    {
+        Settings:ExportJSON
+        relay all -noredirect "JMB.Agent[WinEQ 2022]:Stop:Start"
+    }
+
     ; Retrieve a list of Profiles that have names
     member:jsonvalueref Profiles()
     {
@@ -445,6 +496,23 @@ objectdef weq2022
         }
 
         return ja
+    }
+
+    method AddAgentProvider()
+    {
+        JMB:AddAgentProvider["","${LGUI2.Template[weq2022.devProvider]~}"]        
+    }
+
+    method RemoveAgentProvider()
+    {
+        JMB.AgentProvider[WinEQ-2022-dev]:Remove
+    }
+
+    method Restart()
+    {
+        JMB.AgentProvider[WinEQ-2022-dev].Listing[WinEQ-2022-dev]:Install
+        timed 1 "JMB.Agent[WinEQ 2022]:Stop:Reload:Start"
+        timed 1 "relay all -noredirect \"JMB.Agent[WinEQ 2022]:Stop:Reload:Start\""
     }
 
 }
