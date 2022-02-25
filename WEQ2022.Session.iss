@@ -55,7 +55,7 @@ objectdef weq2022session
         {
             CurrentProfile:SetReference["Settings.Profiles[${NumProfile}]"]
 
-            numPreset:Set[${CurrentProfile.Preset}]
+            numPreset:Set[${CurrentProfile.Preset}+1]
 
             if ${CurrentProfile.GlobalHotkey.NotNULLOrEmpty} && ${CurrentProfile.GlobalHotkey.NotEqual["AUTO"]}
             {
