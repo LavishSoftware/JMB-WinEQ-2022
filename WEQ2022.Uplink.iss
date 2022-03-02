@@ -20,9 +20,9 @@ objectdef weq2022
     {
         variable filepath fpFolder="${WinEQ2Folder~}"
         
-        if ${JMB.Build}<6877
+        if ${JMB.Build}<6881
         {
-            echo "WinEQ 2022 requires JMB build 6877 or later"
+            echo "WinEQ 2022 requires JMB build 6881 or later"
             return
         }
         
@@ -76,21 +76,22 @@ objectdef weq2022
     ; Given a profile number, install a Joe Multiboxer Character for that profile
     method InstallCharacter(uint NumProfile)
     {
-        ; name of the JMB "Game"
-        variable string gameName="${Settings.Profiles[${NumProfile}].UseGame~}"
-        variable string UseGameProfile
-        ; The "Game Profile" used for JMB is always "____ Default Profile"
-        UseGameProfile:Set["${gameName~} Default Profile"]
+        variable weakref useProfile="Settings.Profiles[${NumProfile}]"
 
+        ; name of the JMB "Game"
+        variable string gamePath="${useProfile.EQPath~}"
+        variable string gameExecutable="${useProfile.GetExecutable~}"
+        variable string parameters="${useProfile.GetParameters~}"
+        
         ; the Character ID to add
         variable uint CharacterID=${This.GetCharacterID[${NumProfile}]}
 
         ; the Character Name will be the name of the profile 
-        variable string CharacterName="${Settings.Profiles[${NumProfile}].Name~}"
+        variable string CharacterName="${useProfile.Name~}"
 
         ; add custom eqclient.ini file if specified
         ; note that the default value from WinEQ 2 is ".\eqclient.ini" and that slash should be converted to a / to make things easier
-        variable string EQClientINI="${Settings.Profiles[${NumProfile}].EQClientINI.Replace["\\","/"]~}"
+        variable string EQClientINI="${useProfile.EQClientINI.Replace["\\","/"]~}"
         if !${EQClientINI.NotNULLOrEmpty}
             EQClientINI:Set["eqclient.ini"]
 
@@ -103,8 +104,9 @@ objectdef weq2022
         {
             "id":${CharacterID},
             "display_name":${CharacterName.AsJSON~},
-            "game":${gameName.AsJSON~},
-            "gameProfile":${UseGameProfile.AsJSON~},
+            "path":${gamePath.AsJSON~},
+            "executable":${gameExecutable.AsJSON~},
+            "parameters":${parameters.AsJSON~},
             "virtualFiles":[
                 {
                     "pattern":"*\/eqclient.ini",
@@ -198,37 +200,6 @@ objectdef weq2022
                 }
                 <$$"]
         return jo
-    }
-
-    ; Install any EQ1 folders used by Profiles to Joe Multiboxer as "Games", and insert the name used back in the Profile
-    method InstallEQFolders()
-    {
-        variable filepath fpFolder
-        variable int i
-
-        variable int NumFolder=1
-        variable string Suffix
-        for (i:Set[1] ; ${i}<=30 ; i:Inc)
-        {
-            if !${Settings.Profiles[${i}].Name.NotNULLOrEmpty} || !${Settings.Profiles[${i}].EQPath.NotNULLOrEmpty} || !${Settings.Profiles[${i}].EQPath.PathExists}
-                continue
-
-;            echo "Adding EQ Folder ${Settings.Profiles[${i}].EQPath~}"
-            JMBUplink:AddGame[EverQuest Launcher${Suffix},"${Settings.Profiles[${i}].EQPath~}","LaunchPad.exe"]
-            JMBUplink:AddGame[EverQuest Client${Suffix},"${Settings.Profiles[${i}].EQPath~}","eqgame.exe","patchme"]
-
-            if ${Settings.Profiles[${i}].Patch}
-            {
-                Settings.Profiles[${i}].UseGame:Set["EverQuest Launcher${Suffix}"]
-            }
-            else
-            {
-                Settings.Profiles[${i}].UseGame:Set["EverQuest Client${Suffix}"]
-            }
-
-            NumFolder:Inc
-            Suffix:Set[" ${NumFolder}"]
-        }
     }
 
     ; Find a Slot that does not currently have a running game instance 
@@ -354,7 +325,6 @@ objectdef weq2022
         ; and apply that to our Settings to install default settings!
         Settings:FromJSON["joDefaults"]
 
-        This:InstallEQFolders
         ; store the new settings as our own JSON file
         Settings:ExportJSON
 
