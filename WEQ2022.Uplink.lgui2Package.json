@@ -255,8 +255,11 @@
                                                         },
                                                         {
                                                             "name":"EQClient.ini file",
-                                                            "dataBinding":"_CONTEXT_.Object.EQClientINI",
-                                                            "editTemplate":"propertyview.textbox"
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.EQClientINI}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                            "editTemplate":"propertyview.textblock"
                                                         },
                                                         {
                                                             "name":"Use Patcher",
