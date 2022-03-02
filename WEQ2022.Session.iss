@@ -489,7 +489,7 @@ objectdef weq2022session
         if !${Display.Window(exists)}
             return
 
-        WindowCharacteristics -lock
+;        WindowCharacteristics -lock
 
         echo "Performing game window setup ..."
 
