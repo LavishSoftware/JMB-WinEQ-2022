@@ -125,8 +125,8 @@
             "title":"WinEQ 2022 Control Panel (${WEQ2022Session.Settings.Hotkeys.ShowGUI~})",
             "hideOnClose": true,
             "width":600,
-            "minSize":[300,200],
-            "height":200,
+            "minSize":[300,250],
+            "height":250,
             "horizontalAlignment":"center",
             "verticalAlignment":"center",
             "visibility": "hidden",
@@ -181,6 +181,16 @@
                                     },
                                     "padding":5,
                                     "children":[
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"Current Profile: ${WEQ2022Session.CurrentProfile.Name}"
+                                        },
+                                        {
+                                            "type":"textblock",
+                                            "_dock":"top",
+                                            "text":"eqclient.ini: ${WEQ2022Session.CurrentProfile.EQClientINI}"
+                                        },
                                         {
                                             "type":"textblock",
                                             "_dock":"top",
