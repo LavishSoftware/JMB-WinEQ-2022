@@ -195,7 +195,7 @@
                                             "_dock":"top",
                                             "padding":2,
                                             "horizontalAlignment": "stretch",
-                                            "heightFactor":0.5,
+                                            "heightFactor":0.8,
                                             "children":[
                                                 {
                                                     "type":"textblock",
@@ -254,6 +254,11 @@
                                                               "viewTemplate":"propertyview.textblock"  
                                                         },
                                                         {
+                                                            "name":"EQClient.ini file",
+                                                            "dataBinding":"_CONTEXT_.Object.EQClientINI",
+                                                            "editTemplate":"propertyview.textbox"
+                                                        },
+                                                        {
                                                             "name":"Use Patcher",
                                                             "dataBinding":{
                                                                 "pullFormat":"${_CONTEXT_.Object.Patch}",
@@ -262,9 +267,25 @@
                                                               "viewTemplate":"propertyview.checkbox"  
                                                         },
                                                         {
-                                                            "name":"JMB Game",
+                                                            "name":"Test Server",
                                                             "dataBinding":{
-                                                                "pullFormat":"${_CONTEXT_.Object.UseGame}",
+                                                                "pullFormat":"${_CONTEXT_.Object.TestServer}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.checkbox"  
+                                                        },
+                                                        {
+                                                            "name":"Game Executable",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.GetExecutable}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.textblock"  
+                                                        },
+                                                        {
+                                                            "name":"Game Parameters",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.GetParameters}",
                                                                 "pullReplaceNull":""
                                                               },
                                                               "viewTemplate":"propertyview.textblock"  
@@ -560,6 +581,11 @@
                                                 {
                                                     "name":"Show GUI",
                                                     "dataBinding":"_CONTEXT_.Object.ShowGUI",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Show Window Presets",
+                                                    "dataBinding":"_CONTEXT_.Object.ShowWindowPresets",
                                                     "editTemplate":"propertyview.inputCombo"                            
                                                 },
                                                 {
