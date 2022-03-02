@@ -537,6 +537,11 @@
                                                       "viewTemplate":"propertyview.checkbox"  
                                                 },
                                                 {
+                                                    "name":"Locale",
+                                                    "dataBinding":"_CONTEXT_.Object.Locale",
+                                                      "viewTemplate":"propertyview.textbox"  
+                                                },
+                                                {
                                                     "name":"Game Executable",
                                                     "dataBinding":{
                                                         "pullFormat":"${_CONTEXT_.Object.GetExecutable}",
