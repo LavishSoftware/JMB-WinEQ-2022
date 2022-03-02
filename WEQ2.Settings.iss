@@ -390,6 +390,52 @@ objectdef weq2profile
             UseGame:Set["${jo.Get[UseGame]~}"]
     }
 
+    member GetLocale()
+    {
+        switch ${Locale}
+        {
+            default
+            case 0
+                return "us"
+            case 1
+                return "kr"
+            case 2
+                return "tw"
+            case 3
+                return "jp"
+            case 4
+                return "de"
+            case 5
+                return "fr"
+            case 6
+                return "cn"
+                
+        }        
+    }
+
+    member GetExecutable()
+    {
+        if ${Patch}
+        {
+            return "launchpad.exe"
+        }
+        
+        if ${TestServer}
+        {
+            return "testeqgame.exe"
+        }
+
+        return "eqgame.exe"
+    }
+
+    member GetParameters()
+    {
+        if ${Patch}
+            return ""
+
+        return "patchme /Locale:${This.GetLocale~}"
+    }
+
     ; Generate a JSON snapshot
      member AsJSON()
     {
