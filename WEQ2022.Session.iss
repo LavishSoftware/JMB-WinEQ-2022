@@ -99,6 +99,11 @@ objectdef weq2022session
             
         This:SetForceWindow[1]
 
+        if ${CurrentProfile.Adapter}>=0
+        {
+            This:SetForceAdapter[${CurrentProfile.Adapter}]
+        }
+
         ; if the game window is already created, set it up as desired
         if ${Display.Window(exists)}
             This:SetupGameWindow
@@ -232,6 +237,11 @@ objectdef weq2022session
             case SW_HIDE
                 break
         }
+    }
+
+    method SetForceAdapter(int numAdapter)
+    {
+        noop ${Direct3D8:SetAdapter[${numAdapter}]} ${Direct3D9:SetAdapter[${numAdapter}]}
     }
 
     method SetForceWindow(bool value)
