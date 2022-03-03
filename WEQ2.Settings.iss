@@ -336,7 +336,6 @@ objectdef weq2profile
     variable float PIPScale=0.2
 
     variable uint NumProfile
-    variable string UseGame
 
     method Initialize(uint numProfile)
     {
@@ -386,8 +385,6 @@ objectdef weq2profile
             PIPBorder:Set["${jo.Get[PIPBorder]~}"]
         if ${jo.Has["PIPScale"]}
             PIPScale:Set["${jo.Get[PIPScale]~}"]
-        if ${jo.Has["UseGame"]}
-            UseGame:Set["${jo.Get[UseGame]~}"]
     }
 
     member GetLocale()
@@ -461,7 +458,6 @@ objectdef weq2profile
             "PIPY":${PIPY.AsJSON~},
             "PIPBorder":${PIPBorder.AsJSON~},
             "PIPScale":${PIPScale.AsJSON~},
-            "UseGame":${UseGame.AsJSON~},
             "NumProfile":${NumProfile.AsJSON~},
         }
         <$$"]

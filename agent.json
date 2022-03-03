@@ -1,8 +1,8 @@
 {
     "$schema": "http://www.lavishsoft.com/schema/agent.json",
     "name": "WinEQ 2022",
-    "version": "20220302.1",
-    "minimumBuild": 6877,
+    "version": "20220302.2",
+    "minimumBuild": 6881,
     "platforms": {
         "joe multiboxer uplink": {
             "eventHandlers": {

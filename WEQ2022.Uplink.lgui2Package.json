@@ -523,24 +523,36 @@
                                                 },
                                                 {
                                                     "name":"EverQuest Path",
+                                                    "dataBinding":"_CONTEXT_.Object.EQPath",
+                                                      "viewTemplate":"propertyview.textbox"  
+                                                },
+                                                {
+                                                    "name":"Use Patcher",
+                                                    "dataBinding":"_CONTEXT_.Object.Patch",
+                                                      "viewTemplate":"propertyview.checkbox"  
+                                                },
+                                                {
+                                                    "name":"Test Server",
+                                                    "dataBinding":"_CONTEXT_.Object.TestServer",
+                                                      "viewTemplate":"propertyview.checkbox"  
+                                                },
+                                                {
+                                                    "name":"Locale",
+                                                    "dataBinding":"_CONTEXT_.Object.Locale",
+                                                      "viewTemplate":"propertyview.textbox"  
+                                                },
+                                                {
+                                                    "name":"Game Executable",
                                                     "dataBinding":{
-                                                        "pullFormat":"${_CONTEXT_.Object.EQPath}",
+                                                        "pullFormat":"${_CONTEXT_.Object.GetExecutable}",
                                                         "pullReplaceNull":""
                                                       },
                                                       "viewTemplate":"propertyview.textblock"  
                                                 },
                                                 {
-                                                    "name":"Use Patcher",
+                                                    "name":"Game Parameters",
                                                     "dataBinding":{
-                                                        "pullFormat":"${_CONTEXT_.Object.Patch}",
-                                                        "pullReplaceNull":""
-                                                      },
-                                                      "viewTemplate":"propertyview.checkbox"  
-                                                },
-                                                {
-                                                    "name":"JMB Game",
-                                                    "dataBinding":{
-                                                        "pullFormat":"${_CONTEXT_.Object.UseGame}",
+                                                        "pullFormat":"${_CONTEXT_.Object.GetParameters}",
                                                         "pullReplaceNull":""
                                                       },
                                                       "viewTemplate":"propertyview.textblock"  
