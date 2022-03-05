@@ -374,6 +374,28 @@
                                                 "pullFormat":"${WEQ2022.Settings.LockGamma}",
                                                 "pushFormat":["WEQ2022:SetLockGamma[","]"]
                                             }
+                                        },
+                                        {
+                                            "type":"checkbox",
+                                            "margin":[0,5,0,0],
+                                            "_dock":"top",
+                                            "content":"Force Windowed (in fullscreen mode)",
+                                            "tooltip":"When enabled, prevents the game from actually entering exclusive full screen mode, instead emulating it.\nOriginal WinEQ 2 permanently ENABLED this setting.",
+                                            "checkedBinding":{
+                                                "pullFormat":"${WEQ2022.Settings.ForceWindowed}",
+                                                "pushFormat":["WEQ2022:SetForceWindowed[","]"]
+                                            }
+                                        },
+                                        {
+                                            "type":"checkbox",
+                                            "margin":[0,5,0,0],
+                                            "_dock":"top",
+                                            "content":"Lock Window Characteristics",
+                                            "tooltip":"When enabled, prevents the game from moving or adjusting the window in any way, and will also prevent the window from minimizing.",
+                                            "checkedBinding":{
+                                                "pullFormat":"${WEQ2022.Settings.LockWindow}",
+                                                "pushFormat":["WEQ2022:SetLockWindow[","]"]
+                                            }
                                         }
                                     ]
                                 }

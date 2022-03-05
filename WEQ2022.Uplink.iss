@@ -405,6 +405,26 @@ objectdef weq2022
         Settings:ExportJSON
     }
 
+    method SetLockWindow(bool newValue)
+    {
+        if ${newValue}==${Settings.LockWindow}
+            return
+
+        Settings.LockWindow:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetLockWindow[${newValue}]"
+        Settings:ExportJSON
+    }
+
+    method SetForceWindowed(bool newValue)
+    {
+        if ${newValue}==${Settings.ForceWindowed}
+            return
+
+        Settings.ForceWindowed:Set[${newValue}]
+        relay all -noredirect "WEQ2022Session:SetForceWindowed[${newValue}]"
+        Settings:ExportJSON
+    }
+
     method SetUseEQPlayNice(bool newValue)
     {
         if ${newValue}==${Settings.UseEQPlayNice}
