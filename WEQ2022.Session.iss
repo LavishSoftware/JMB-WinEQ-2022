@@ -89,11 +89,8 @@ objectdef weq2022session
             EQPlayNice:SetCeiling["${Math.Calc[${Settings.RenderStrobeInterval}*1000]}"]
         }
 
-        if ${Settings.ForegroundFPS}
-            maxfps -fg -calculate ${Settings.ForegroundFPS}
-        if ${Settings.BackgroundFPS}
-            maxfps -bg -calculate ${Settings.BackgroundFPS}
-        
+        This:SetForegroundFPS[${Settings.ForegroundFPS}]
+        This:SetBackgroundFPS[${Settings.BackgroundFPS}]        
         This:SetLockGamma[${Settings.LockGamma}]
         This:SetForceWindowed[${Settings.ForceWindowed}]
 
