@@ -31,9 +31,9 @@ objectdef weq2022session
     ; Object constructor
     method Initialize()
     {
-        if ${JMB.Build}<6877
+        if ${JMB.Build}<6881
         {
-            echo "WinEQ 2022 requires JMB build 6877 or later"
+            echo "WinEQ 2022 requires JMB build 6881 or later"
             return
         }
 
@@ -89,15 +89,10 @@ objectdef weq2022session
             EQPlayNice:SetCeiling["${Math.Calc[${Settings.RenderStrobeInterval}*1000]}"]
         }
 
-        if ${Settings.LockGamma}
-            GammaLock on
-
-        if ${Settings.ForegroundFPS}
-            maxfps -fg -calculate ${Settings.ForegroundFPS}
-        if ${Settings.BackgroundFPS}
-            maxfps -bg -calculate ${Settings.BackgroundFPS}
-            
-        This:SetForceWindow[1]
+        This:SetForegroundFPS[${Settings.ForegroundFPS}]
+        This:SetBackgroundFPS[${Settings.BackgroundFPS}]        
+        This:SetLockGamma[${Settings.LockGamma}]
+        This:SetForceWindowed[${Settings.ForceWindowed}]
 
         if ${CurrentProfile.Adapter}>=0
         {
@@ -205,7 +200,7 @@ objectdef weq2022session
 
     method OnWindowPosition()
     {
-;        echo OnWindowPosition
+;        echo OnWindowPosition min=${Display.Window.IsMinimized} max=${Display.Window.IsMaximized} alwaysontop=${Display.Window.AlwaysOnTop} visible=${Display.Window.IsVisible}
     }
 
     method OnActivate()
@@ -241,14 +236,28 @@ objectdef weq2022session
 
     method SetForceAdapter(int numAdapter)
     {
+        CurrentProfile.Adapter:Set[${numAdapter}]
         noop ${Direct3D8:SetAdapter[${numAdapter}]} ${Direct3D9:SetAdapter[${numAdapter}]}
     }
 
-    method SetForceWindow(bool value)
+    method SetForceWindowed(bool value)
 	{
-			noop ${Direct3D8:SetForceWindowed[${value}]} ${Direct3D9:SetForceWindowed[${value}]} ${Direct3D10:SetForceWindowed[${value}]} ${Direct3D11:SetForceWindowed[${value}]}				
+        Settings.ForceWindowed:Set[${value}]
+        noop ${Direct3D8:SetForceWindowed[${value}]} ${Direct3D9:SetForceWindowed[${value}]} ${Direct3D10:SetForceWindowed[${value}]} ${Direct3D11:SetForceWindowed[${value}]}				
 	}
 
+    method SetLockWindow(bool value)
+    {
+        Settings.LockWindow:Set[${value}]
+        if ${value}
+        {
+            windowcharacteristics -lock
+        }
+        else
+        {
+            windowcharacteristics -unlock
+        }
+    }
 
     ; Installs a Hotkey, given a name, a key combination, and LavishScript code to execute on PRESS
     method InstallHotkey(string name, string keyCombo, string methodName)
@@ -499,7 +508,7 @@ objectdef weq2022session
         if !${Display.Window(exists)}
             return
 
-;        WindowCharacteristics -lock
+        This:SetLockWindow[${Settings.LockWindow}]
 
         echo "Performing game window setup ..."
 
@@ -625,7 +634,7 @@ objectdef weq2022session
         {
             ; full screen! note that the 0,0 position used here is the primary display.
             ; TODO: alter this code to support correct positioning for multiple monitors
-            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable 0,0 -frame none -visibility foreground
+            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable ${Display.Monitor.Left},${Display.Monitor.Top} -frame none -visibility foreground
             return
         }
 
@@ -658,10 +667,15 @@ objectdef weq2022session
         sizeX:Set[${Display.Width}*${useScale}]
         sizeY:Set[${Display.Height}*${useScale}]
 
+        variable uint posX
+        variable uint posY
+        posX:Set[${Display.Monitor.Left}+${CurrentPreset.X}]
+        posY:Set[${Display.Monitor.Top}+${CurrentPreset.Y}]
+
         if ${useScale}!=1.0
-            WindowCharacteristics -stealth -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+            WindowCharacteristics -stealth -pos -viewable ${posX},${posY} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
         else
-            WindowCharacteristics -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+            WindowCharacteristics -pos -viewable ${posX},${posY} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
         
     }
 

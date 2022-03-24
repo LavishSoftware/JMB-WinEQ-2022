@@ -5,6 +5,9 @@ objectdef weq2settings
     variable int IndicatorX=20
     variable int IndicatorY=28
     variable bool LockGamma=FALSE
+    variable bool LockWindow=FALSE
+    variable bool ForceWindowed=TRUE
+
     variable bool UseEQPlayNice=FALSE
     variable float RenderStrobeInterval=1.0
     variable filepath AgentFolder="${Script.CurrentDirectory~}"
@@ -33,6 +36,8 @@ objectdef weq2settings
             "IndicatorX":${IndicatorX.AsJSON~},
             "IndicatorY":${IndicatorY.AsJSON~},
             "LockGamma":${LockGamma.AsJSON~},
+            "ForceWindowed":${ForceWindowed.AsJSON~},
+            "LockWindow":${LockWindow.AsJSON~},
             "EQPlayNice":${UseEQPlayNice.AsJSON~},
             "RenderStrobeInterval":${RenderStrobeInterval.AsJSON~},
             "BackgroundFPS":${BackgroundFPS.AsJSON~},
@@ -79,6 +84,12 @@ objectdef weq2settings
 
         if ${jo.Has[LockGamma]}
             LockGamma:Set["${jo.Get[LockGamma]~}"]
+
+        if ${jo.Has[LockWindow]}
+            LockWindow:Set["${jo.Get[LockWindow]~}"]
+
+        if ${jo.Has[ForceWindowed]}
+            ForceWindowed:Set["${jo.Get[ForceWindowed]~}"]
 
         if ${jo.Has[EQPlayNice]}
             UseEQPlayNice:Set["${jo.Get[EQPlayNice]~}"]
