@@ -650,7 +650,7 @@ objectdef weq2022session
         {
             ; full screen! note that the 0,0 position used here is the primary display.
             ; TODO: alter this code to support correct positioning for multiple monitors
-            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable 0,0 -frame none -visibility foreground
+            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable ${Display.Monitor.Left},${Display.Monitor.Top} -frame none -visibility foreground
             return
         }
 
@@ -683,10 +683,15 @@ objectdef weq2022session
         sizeX:Set[${Display.Width}*${useScale}]
         sizeY:Set[${Display.Height}*${useScale}]
 
+        variable uint posX
+        variable uint posY
+        posX:Set[${Display.Monitor.Left}+${CurrentPreset.X}]
+        posY:Set[${Display.Monitor.Top}+${CurrentPreset.Y}]
+
         if ${useScale}!=1.0
-            WindowCharacteristics -stealth -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+            WindowCharacteristics -stealth -pos -viewable ${posX},${posY} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
         else
-            WindowCharacteristics -pos -viewable ${CurrentPreset.X},${CurrentPreset.Y} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
+            WindowCharacteristics -pos -viewable ${posX},${posY} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
         
     }
 
