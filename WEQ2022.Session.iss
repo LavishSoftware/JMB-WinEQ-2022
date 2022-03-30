@@ -362,24 +362,40 @@ objectdef weq2022session
         if !${Slot}
             return 0
 
-        Slot:Inc
-        if ${Slot}>${JMB.Slots.Used}
-            return 1
+        while 1
+        {
 
-        return ${Slot}
+            Slot:Inc
+            if ${Slot}>${JMB.Slots.Used}
+                Slot:Set[1]
+
+            if ${Slot}==${JMB.Slot}
+                return 0
+
+            if ${JMB.Slot[${Slot}].ProcessID}
+                return ${Slot}
+        }        
     }
-    
+
     member:uint GetPreviousSlot()
     {
         variable uint Slot=${JMB.Slot}
         if !${Slot}
             return 0
 
-        Slot:Dec
-        if !${Slot}
-            return ${JMB.Slots.Used}
+        while 1
+        {
 
-        return ${Slot}
+            Slot:Dec
+            if !${Slot}
+                Slot:Set[${JMB.Slots.Used}]
+
+            if ${Slot}==${JMB.Slot}
+                return 0
+
+            if ${JMB.Slot[${Slot}].ProcessID}
+                return ${Slot}
+        }        
     }
 
     method PreviousWindow()
