@@ -28,14 +28,24 @@ objectdef weq2022session
     ; A LavishScript Query used to scan a list of objects for matches, in this case where a name is empty (to filter out unused Window Presets)
     variable uint Query_NoName=${LavishScript.CreateQuery["Get[Name].Length==0"]}
 
+    variable bool ValidSession
+
     ; Object constructor
     method Initialize()
     {
-        if ${JMB.Build}<6881
+        if ${JMB.Build}<6926
         {
-            echo "WinEQ 2022 requires JMB build 6881 or later"
+            echo "WinEQ 2022 requires JMB build 6926 or later"
             return
         }
+
+        if !${JMB.Slot.Metadata.Get[launcher]~.Equal["WinEQ 2022"]}
+        {
+            echo "WinEQ 2022 inactive; Session not launched by WinEQ 2022."
+            return
+        }
+
+        ValidSession:Set[1]
 
         ; Load our GUI
         LGUI2:LoadPackageFile[WEQ2022.Session.lgui2Package.json]
@@ -126,6 +136,11 @@ objectdef weq2022session
 
         ; free our LavishScript Query
         LavishScript:FreeQuery[${Query_NoName}]
+    }
+
+    method Restart()
+    {
+        timed 0 "JMB.Agent[WinEQ 2022]:Stop:Reload:Start"
     }
 
     ; Process custom variables within a string, for example "WinEQ {VERSION} {PLUGIN} - EverQuest (Hotkey: {HOTKEY})" may become
@@ -738,6 +753,8 @@ variable(global) weq2022session WEQ2022Session
 
 function main()
 {
+    if !${WEQ2022Session.ValidSession}
+        return
     while 1
         waitframe
 }

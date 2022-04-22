@@ -20,9 +20,9 @@ objectdef weq2022
     {
         variable filepath fpFolder="${WinEQ2Folder~}"
         
-        if ${JMB.Build}<6881
+        if ${JMB.Build}<6926
         {
-            echo "WinEQ 2022 requires JMB build 6881 or later"
+            echo "WinEQ 2022 requires JMB build 6926 or later"
             return
         }
         
@@ -288,25 +288,29 @@ objectdef weq2022
             return
         }
 
-        variable uint Slot
-        ; with this method, clicking launch will first attempt to fill an existing Slot that has not been launched
-        ; however, that also means we have to wait between launches or they fill the same Slot.
-        Slot:Set[${This.FindEmptySlot}]
-        if !${Slot}
-            Slot:Set["${JMB.AddSlot.ID}"]
+        variable weakref Slot
+        variable uint NumSlot
+        ; with this method, clicking launch will first attempt to fill an existing Slot which has no session
+        NumSlot:Set[${This.FindEmptySlot}]
+        if !${NumSlot}
+            NumSlot:Set["${JMB.AddSlot.ID}"]
 
-        echo "launching WinEQ 2 profile ${UseProfile.Name} in slot ${Slot}"
+        Slot:SetReference["JMB.Slot[${NumSlot}]"]        
+
+        echo "launching WinEQ 2 profile ${UseProfile.Name} in slot ${NumSlot}"
 
         ; install the JMB Character
         This:InstallCharacter[${NumProfile}]
         ; fill in the Slot details by providing the Character ID
-        JMB.Slot[${Slot}]:SetCharacter[${This.GetCharacterID[${NumProfile}]}]
+        Slot:SetCharacter[${This.GetCharacterID[${NumProfile}]}]
 
-        echo character ID = ${JMB.Slot[${Slot}].Character.ID}
+        echo character ID = ${Slot.Character.ID}
+
+        Slot.Metadata[TRUE]:SetString["launcher","WinEQ 2022"]
 
         echo launching...
         ; finally, we launch the Slot
-        if !${JMB.Slot[${Slot}]:Launch(exists)}
+        if !${Slot:Launch(exists)}
         {
             echo Launch failed?
         }
@@ -468,7 +472,7 @@ objectdef weq2022
     method Save()
     {
         Settings:ExportJSON
-        relay all -noredirect "JMB.Agent[WinEQ 2022]:Stop:Start"
+        relay all -noredirect "WEQ2022Session:Restart"
     }
 
     ; Retrieve a list of Profiles that have names
@@ -502,7 +506,7 @@ objectdef weq2022
     {
         JMB.AgentProvider[WinEQ-2022-dev].Listing[WinEQ-2022-dev]:Install
         timed 1 "JMB.Agent[WinEQ 2022]:Stop:Reload:Start"
-        timed 1 "relay all -noredirect \"JMB.Agent[WinEQ 2022]:Stop:Reload:Start\""
+        timed 1 "relay all -noredirect \"WEQ2022Session:Restart\""
     }
 
 }
