@@ -237,7 +237,7 @@ objectdef weq2022session
     method SetForceAdapter(int numAdapter)
     {
         CurrentProfile.Adapter:Set[${numAdapter}]
-        noop ${Direct3D8:SetAdapter[${numAdapter}]} ${Direct3D9:SetAdapter[${numAdapter}]}
+        noop ${Direct3D8:SetAdapter[${numAdapter}]} ${Direct3D9:SetAdapter[${numAdapter}]} ${Direct3D11:SetMonitor["${Display.Monitor[${numAdapter.Inc}]~}"]}
     }
 
     method SetForceWindowed(bool value)
@@ -634,7 +634,7 @@ objectdef weq2022session
     method ApplyWindowPreset()
     {  
            ; make sure the game window currently exists, otherwise we have nothing to do yet
-        if !${Display.Window(exists)}
+        if !${Display.Window(exists)} || !${Display.Width} || !${Display.Height}
             return
 
          ;   windowscale 100

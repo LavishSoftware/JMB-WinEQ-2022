@@ -217,6 +217,49 @@ objectdef weq2022
         return 0
     }
 
+    method OnDeleteProfileButton()
+    {
+        variable uint NumProfile=${UseProfile.NumProfile}
+        if !${NumProfile}
+        {
+            ; no profile selected
+            echo UseProfile.NumProfile = ${NumProfile}
+            return
+        }
+
+        Settings.Profiles:Remove[${NumProfile}]
+        LGUI2.Element[weq2022.events]:FireEventHandler[onProfilesUpdated]
+    }
+
+    method OnNewProfileButton()
+    {
+        variable uint NumProfile = ${Settings.Profiles.Used.Inc}
+
+
+        variable jsonvalueref joNewProfile
+
+        variable uint copyProfile=${UseProfile.NumProfile}
+        if !${copyProfile} && ${Settings.Profiles[1](exists)}
+        {
+            copyProfile:Set[1]
+        }
+
+        if ${copyProfile}
+        {
+            joNewProfile:SetReference["Settings.Profiles[1].AsJSON.Duplicate"]
+        }
+
+        if !${joNewProfile.Reference(exists)}        
+            joNewProfile:SetReference["{}"]
+
+        joNewProfile:SetString[Name,"WinEQ 2022 Profile ${NumProfile}"]
+
+        Settings.Profiles:Insert[${NumProfile},${NumProfile}]
+
+        Settings.Profiles[${NumProfile}]:FromJSON[joNewProfile]
+        LGUI2.Element[weq2022.events]:FireEventHandler[onProfilesUpdated]
+    }
+
     method OnCreateShortcutButton()
     {
         variable uint NumProfile=${UseProfile.NumProfile}
@@ -481,7 +524,7 @@ objectdef weq2022
         {
             if ${Settings.Profiles[${i}].Name.NotNULLOrEmpty}
             {
-                ja:Add["${Settings.Profiles[${i}].AsJSON~}"]
+                ja:AddByRef["Settings.Profiles[${i}].AsJSON"]
             }
         }
 

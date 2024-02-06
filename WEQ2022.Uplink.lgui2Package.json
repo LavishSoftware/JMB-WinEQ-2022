@@ -40,7 +40,17 @@
               "Preset9":"NONE",
               "Global9":null,
               "Preset10":"NONE",
-              "Global10":null
+              "Global10":null,
+              "Global11":null,
+              "Global12":null,
+              "Global13":null,
+              "Global14":null,
+              "Global15":null,
+              "Global16":null,
+              "Global17":null,
+              "Global18":null,
+              "Global19":null,
+              "Global20":null
             },
             "Profile1":{
               "Name":"WinEQ 2.0 Default Profile",
@@ -132,7 +142,7 @@
                   "pullReplaceNull":""
                 }
               }
-            }      
+            }                
     },
     "elements": [
         {
@@ -289,6 +299,14 @@
                                                             "name":"Game Parameters",
                                                             "dataBinding":{
                                                                 "pullFormat":"${_CONTEXT_.Object.GetParameters}",
+                                                                "pullReplaceNull":""
+                                                              },
+                                                              "viewTemplate":"propertyview.textblock"  
+                                                        },
+                                                        {
+                                                            "name":"Use Monitor",
+                                                            "dataBinding":{
+                                                                "pullFormat":"${_CONTEXT_.Object.Adapter}",
                                                                 "pullReplaceNull":""
                                                               },
                                                               "viewTemplate":"propertyview.textblock"  
@@ -500,30 +518,68 @@
                                     "horizontalAlignment":"stretch",
                                     "children":[
                                         {
-                                            "type":"listbox",
+                                            "type":"dockpanel",
                                             "_dock":"left",
                                             "widthFactor":0.3,
-                                            "verticalAlignment": "stretch",
-                                            "name":"weq2022.UseProfile",
-                                            "itemsBinding":{
-                                                "pullFormat": "${WEQ2022.Settings.Profiles.AsJSON}",
-                                                "pullHook": {   
-                                                  "elementName": "weq2022.events",
-                                                  "flags": "global",
-                                                  "event": "onProfilesUpdated"
-                                                }
-                                            },
-                                            "selectedItemBinding":{
-                                                "pullFormat":"${WEQ2022.UseProfile.Name}",
-                                                "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
-                                            },
-                                            "selectedItemBindingProperty":"Name",
-                                            "itemViewGenerators":{
-                                                "default":{
-                                                  "type":"template",
-                                                  "template":"weq2022.profileView"
-                                                }
-                                            }
+                                            "children":[
+                                                {
+                                                    "type":"dockpanel",
+                                                    "_dock":"bottom",
+                                                    "horizontalAlignment": "stretch",
+                                                    "children":[
+                                                        {
+                                                            "type":"button",
+                                                            "_dock":"left",
+                                                            "content":"Delete",
+                                                            "eventHandlers":{
+                                                                "onPress":{
+                                                                    "type":"method",
+                                                                    "object":"WEQ2022",
+                                                                    "method":"OnDeleteProfileButton"
+                                                                }                                
+                                                            }
+                                                        },
+                                                        {
+                                                            "type":"button",
+                                                            "_dock":"right",
+                                                            "content":"New Profile",
+                                                            "eventHandlers":{
+                                                                    "onPress":{
+                                                                    "type":"method",
+                                                                    "object":"WEQ2022",
+                                                                    "method":"OnNewProfileButton"
+                                                                }                                
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type":"listbox",
+                                                    "_dock":"left",
+                                                    "horizontalAlignment": "stretch",
+                                                    "verticalAlignment": "stretch",
+                                                    "name":"weq2022.UseProfile",
+                                                    "itemsBinding":{
+                                                        "pullFormat": "${WEQ2022.Settings.Profiles.AsJSON}",
+                                                        "pullHook": {   
+                                                          "elementName": "weq2022.events",
+                                                          "flags": "global",
+                                                          "event": "onProfilesUpdated"
+                                                        }
+                                                    },
+                                                    "selectedItemBinding":{
+                                                        "pullFormat":"${WEQ2022.UseProfile.Name}",
+                                                        "pushFormat":["WEQ2022:SetProfile[\"","\"]"]
+                                                    },
+                                                    "selectedItemBindingProperty":"Name",
+                                                    "itemViewGenerators":{
+                                                        "default":{
+                                                          "type":"template",
+                                                          "template":"weq2022.profileView"
+                                                        }
+                                                    }
+                                                }        
+                                            ]
                                         },
                                         {
                                             "type":"objectview",
@@ -593,6 +649,11 @@
                                                     "name":"Global Hotkey",
                                                     "dataBinding":"_CONTEXT_.Object.GlobalHotkey",
                                                     "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Use Monitor",
+                                                    "dataBinding":"_CONTEXT_.Object.Adapter",
+                                                      "viewTemplate":"propertyview.textbox"  
                                                 }
                                             ]
                                         }
@@ -683,6 +744,56 @@
                                                 {
                                                     "name":"Global Hotkey 10",
                                                     "dataBinding":"_CONTEXT_.Object.Globals[10]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 11",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[11]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 12",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[12]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 13",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[13]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 14",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[14]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 15",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[15]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 16",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[16]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 17",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[17]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 18",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[18]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 19",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[19]",
+                                                    "editTemplate":"propertyview.inputCombo"                            
+                                                },
+                                                {
+                                                    "name":"Global Hotkey 20",
+                                                    "dataBinding":"_CONTEXT_.Object.Globals[20]",
                                                     "editTemplate":"propertyview.inputCombo"                            
                                                 },
                                                 {

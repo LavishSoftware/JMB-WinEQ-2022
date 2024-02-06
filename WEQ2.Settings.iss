@@ -27,7 +27,7 @@ objectdef weq2settings
     }
 
     ; Generate a JSON snapshot
-    member AsJSON()
+    member:jsonvalueref AsJSON()
     {
         variable jsonvalue jo
         jo:SetValue["$$>
@@ -57,7 +57,7 @@ objectdef weq2settings
             jo:Set[Preset${i},"${This.Presets[${i}].AsJSON~}"]
         }
 
-        return "${jo.AsJSON~}"
+        return jo
     }
 
     ; Given a JSON snapshot, fill in all of our variables
@@ -154,8 +154,8 @@ objectdef weq2settings
     ; Export settings to our JSON settings file
     method ExportJSON()
     {
-        variable jsonvalue jo
-        jo:SetValue["${This.AsJSON~}"]
+        variable jsonvalueref jo
+        jo:SetReference["This.AsJSON"]
         if !${jo.Type.Equal[object]}
             return FALSE
 
@@ -199,7 +199,7 @@ objectdef weq2hotkeys
     method Initialize()
     {
         Presets:Resize[10]
-        Globals:Resize[10]
+        Globals:Resize[20]
     }
 
     ; Converts a WinEQ 2 key combo like "Shift+RButton" to a JMB format like "Shift+Mouse1"
@@ -249,13 +249,17 @@ objectdef weq2hotkeys
         {
             if ${jo.Has["Preset${i}"]}
                 Presets:Set[${i},"${This.ConvertKeyCombo["${jo.Get[Preset${i}]~}"]~}"]
+        }
+
+        for (i:Set[1] ; ${i}<=20 ; i:Inc)
+        {
             if ${jo.Has["Global${i}"]}
                 Globals:Set[${i},"${This.ConvertKeyCombo["${jo.Get[Global${i}]~}"]~}"]
         }
     }
 
     ; Generate a JSON snapshot
-    member AsJSON()
+    member:jsonvalueref AsJSON()
     {
         variable jsonvalue jo
         jo:SetValue["$$>
@@ -280,10 +284,12 @@ objectdef weq2hotkeys
         for (i:Set[1] ; ${i}<= 10 ; i:Inc)
         {
             jo:Set[Preset${i},"${This.Presets[${i}].AsJSON~}"]
+        }
+        for (i:Set[1] ; ${i}<= 20 ; i:Inc)
+        {
             jo:Set[Global${i},"${This.Globals[${i}].AsJSON~}"]
         }
-
-        return "${jo.AsJSON~}"
+        return jo
     }
 
     /*
@@ -444,8 +450,15 @@ objectdef weq2profile
         return "patchme /Locale:${This.GetLocale~}"
     }
 
+    method SetName(string newValue)
+    {
+        Name:Set["${newValue~}"]
+        ; inform the GUI that we have updated our list of profiles
+        LGUI2.Element[weq2022.events]:FireEventHandler[onProfilesUpdated]
+    }
+
     ; Generate a JSON snapshot
-     member AsJSON()
+     member:jsonvalueref AsJSON()
     {
         variable jsonvalue jo
         jo:SetValue["$$>
@@ -472,7 +485,7 @@ objectdef weq2profile
             "NumProfile":${NumProfile.AsJSON~},
         }
         <$$"]
-        return "${jo.AsJSON~}"
+        return jo
     }
 
     /*
@@ -568,7 +581,7 @@ objectdef weq2preset
     }
 
     ; Generate a JSON snapshot
-  member AsJSON()
+  member:jsonvalueref AsJSON()
     {
         variable jsonvalue jo
         jo:SetValue["$$>
@@ -586,7 +599,7 @@ objectdef weq2preset
             "Summary":${This.Summary.AsJSON~}
         }
         <$$"]
-        return "${jo.AsJSON~}"
+        return jo
     }
     /* 
      "Preset1": {
