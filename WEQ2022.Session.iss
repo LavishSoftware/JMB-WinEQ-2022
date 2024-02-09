@@ -649,7 +649,6 @@ objectdef weq2022session
         if ${CurrentPreset.FullScreen}
         {
             ; full screen! note that the 0,0 position used here is the primary display.
-            ; TODO: alter this code to support correct positioning for multiple monitors
             WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable ${Display.Monitor.Left},${Display.Monitor.Top} -frame none -visibility foreground
             return
         }
@@ -683,8 +682,8 @@ objectdef weq2022session
         sizeX:Set[${Display.Width}*${useScale}]
         sizeY:Set[${Display.Height}*${useScale}]
 
-        variable uint posX
-        variable uint posY
+        variable int posX
+        variable int posY
         posX:Set[${Display.Monitor.Left}+${CurrentPreset.X}]
         posY:Set[${Display.Monitor.Top}+${CurrentPreset.Y}]
 
