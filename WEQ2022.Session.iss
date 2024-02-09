@@ -646,10 +646,19 @@ objectdef weq2022session
         echo "Applying Window Preset ${CurrentPreset.Name~}"
         echo "${CurrentPreset.AsJSON~}"
 
+        variable int monitorX=${Display.Monitor.Left}
+        variable int monitorY=${Display.Monitor.Top}
+
+        if ${CurrentProfile.Adapter}>=0 && ${Display.Monitor[${CurrentProfile.Adapter.Inc}](exists)}
+        {
+            monitorX:Set[${Display.Monitor[${CurrentProfile.Adapter.Inc}].Left}]
+            monitorY:Set[${Display.Monitor[${CurrentProfile.Adapter.Inc}].Top}]
+        }
+
         if ${CurrentPreset.FullScreen}
         {
             ; full screen! note that the 0,0 position used here is the primary display.
-            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable ${Display.Monitor.Left},${Display.Monitor.Top} -frame none -visibility foreground
+            WindowCharacteristics -stealth -size -viewable fullscreen -pos -viewable ${monitorX},${monitorY} -frame none -visibility foreground
             return
         }
 
@@ -684,8 +693,8 @@ objectdef weq2022session
 
         variable int posX
         variable int posY
-        posX:Set[${Display.Monitor.Left}+${CurrentPreset.X}]
-        posY:Set[${Display.Monitor.Top}+${CurrentPreset.Y}]
+        posX:Set[${monitorX}+${CurrentPreset.X}]
+        posY:Set[${monitorY}+${CurrentPreset.Y}]
 
         if ${useScale}!=1.0
             WindowCharacteristics -stealth -pos -viewable ${posX},${posY} -size -viewable ${sizeX}x${sizeY} ${useAlwaysOnTop}${useBorder}
