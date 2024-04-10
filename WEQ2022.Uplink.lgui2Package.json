@@ -142,6 +142,10 @@
                   "pullReplaceNull":""
                 }
               }
+            },
+            "propertyview.listbox":{
+                "jsonTemplate":"listbox",
+                "type":"listbox"
             }                
     },
     "elements": [
@@ -156,7 +160,7 @@
             "hideOnClose":true,
             "title":"WinEQ 2022 Joe Multiboxer Edition",
             "width":750,
-            "height":400,
+            "height":420,
             "minSize":[600,300],
             "horizontalAlignment":"center",
             "verticalAlignment":"center",
@@ -649,6 +653,33 @@
                                                     "name":"Global Hotkey",
                                                     "dataBinding":"_CONTEXT_.Object.GlobalHotkey",
                                                     "editTemplate":"propertyview.textbox"
+                                                },
+                                                {
+                                                    "name":"Window Preset",
+                                                    "-dataBinding":"_CONTEXT_.Object.Preset",
+                                                    "editTemplate":"propertyview.listbox",
+                                                    "controlData": {
+                                                        "itemsBinding":{
+                                                            "pullFormat": "${WEQ2022.Settings.Presets.AsJSON}",
+                                                            "pullHook": {   
+                                                              "elementName": "weq2022.events",
+                                                              "flags": "global",
+                                                              "event": "onPresetsUpdated"
+                                                            }
+                                                        },
+                                                        "selectedItemBinding":"_CONTEXT_.Context.Object.Preset",
+                                                        "-selectedItemBinding":{
+                                                            "pullFormat":"${_CONTEXT_.Context.Object.Preset}",
+                                                            "pushFormat":["_CONTEXT_.Context.Object.Preset:Set[","]"]
+                                                        },
+                                                        "selectedItemBindingProperty":"NumPreset",                                                                                                            
+                                                        "itemViewGenerators":{
+                                                            "default":{
+                                                              "type":"template",
+                                                              "template":"weq2022.presetView"
+                                                            }
+                                                        }    
+                                                    }
                                                 },
                                                 {
                                                     "name":"Use Monitor",
