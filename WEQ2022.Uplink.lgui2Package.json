@@ -667,10 +667,10 @@
                                                               "event": "onPresetsUpdated"
                                                             }
                                                         },
-                                                        "selectedItemBinding":"_CONTEXT_.Context.Object.Preset",
-                                                        "-selectedItemBinding":{
-                                                            "pullFormat":"${_CONTEXT_.Context.Object.Preset}",
-                                                            "pushFormat":["_CONTEXT_.Context.Object.Preset:Set[","]"]
+                                                        "-selectedItemBinding":"_CONTEXT_.Context.Object.Preset",
+                                                        "selectedItemBinding":{
+                                                            "pullFormat":"${_CONTEXT_.Context.Object.Preset.Inc}",
+                                                            "pushFormat":["_CONTEXT_.Context.Object.Preset:Set[","-1]"]
                                                         },
                                                         "selectedItemBindingProperty":"NumPreset",                                                                                                            
                                                         "itemViewGenerators":{
